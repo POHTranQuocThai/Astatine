@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body.modal-open {
+    overflow: hidden; /* Chặn cuộn */
+    height: 100vh; /* Giữ nguyên chiều cao */
+    width: 100vw;
+    position: fixed; /* Giữ nguyên vị trí, tránh cuộn */
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.modal {
+    pointer-events: auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 350px;
+    height: fit-content;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100vh;
+    z-index: 99;
+    text-align: center;
+}
+.modal.processing{
+    display: block;
+}
+.modal-header {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.modal-body {
+    text-align: center;
+    color: #444;
+    margin-bottom: 1.5rem;
+}
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+.btn {
+    display: flex;
+    width: 100px;
+    height: 30px;
+    padding: 5px 10px;
+    border-radius: 50px;
+    cursor: pointer;
+    text-align: center;
+    justify-content: center;
+}
+.btn-ok {
+    background-color: #21A691;
+    color: white;
+}
+.btn-ok:hover {
+    background-color: white;
+    color: #21A691;
+    border: 2px solid #21A691;
+}
+.btn-cancel {
+    background-color: #eee;
+    color: #444;
+}
+.btn-cancel:hover {
+    background-color: #444;
+    color: white;
+}
+.close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: #a0aec0;
+    cursor: pointer;
+}
+.close-btn:hover {
+    color: #718096;
+}

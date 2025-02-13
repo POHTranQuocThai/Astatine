@@ -1,0 +1,42 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Nov 4, 2024, 9:41:41 AM
+    Author     : Ma Tan Loc - CE181795
+*/
+
+.status {
+    padding: .6rem .2rem;
+    border-radius: 2rem;
+    text-align: center;
+}
+
+.status.Processing {
+    background-color: var(--accent-clr);
+    color: #fff;
+}
+
+.status.Processing:hover{
+    background-color: #fff;
+    color: var(--accent-clr);
+}
+
+.status.Completed {
+    background-color: var(--line-clr);
+    color: #fff;
+}
+
+.table_body td:nth-child(5),td:nth-child(6) {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+tbody tr:hover .Processing,
+tbody tr:hover .Admin {
+    color: var(--line-clr);
+    background-color: #fff;
+}
