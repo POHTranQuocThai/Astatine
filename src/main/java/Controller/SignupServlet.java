@@ -33,7 +33,7 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/signup.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
     }
 
     /**
@@ -53,11 +53,9 @@ public class SignupServlet extends HttpServlet {
             String pass = request.getParameter("password");
             UserDAO uDAO = new UserDAO();
 
-            // Kiểm tra xem fullname hoặc email đã tồn tại
             boolean existsFullname = uDAO.checkFullname(fullname);
             boolean existsEmail = uDAO.checkEmail(email);
 
-            // Nếu fullname hoặc email đã tồn tại, hiển thị thông báo lỗi và dừng lại
             if (existsFullname || existsEmail) {
                 if (existsFullname) {
                     request.setAttribute("existsFullname", "The name already exists!");
@@ -67,25 +65,20 @@ public class SignupServlet extends HttpServlet {
                     request.setAttribute("existsEmail", "The email already exists!!");
                     request.setAttribute("email", email);
                 }
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;  // Dừng quá trình đăng ký nếu có lỗi
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+                return;
             }
 
-            // Nếu không có lỗi, tiến hành mã hóa mật khẩu và đăng ký
             String hashedPass = uDAO.getHashPass(pass);
+
             if (uDAO.signup(fullname, email, hashedPass) != null) {
                 request.setAttribute("successMes", "You have successfully registered!");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-                return;
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
             } else {
-                // Nếu đăng ký thất bại do lý do khác
                 request.setAttribute("errorMes", "Sign Up failed!");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(SignupServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (SQLException | NoSuchAlgorithmException ex) {
             Logger.getLogger(SignupServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
