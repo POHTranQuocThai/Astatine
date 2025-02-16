@@ -104,7 +104,7 @@
                                     <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                        aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                        <div class="qty num-order">${counted != null ? counted: 0}</div>
+                                          <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
