@@ -35,7 +35,7 @@ public class UserDAO extends DBContext {
             if (rs.next()) {
                 return rs.getInt(1) == 1;
             }
-            return true;
+//            return true;
         } catch (SQLException sQLException) {
         }
         return false;
@@ -158,11 +158,12 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+
     public boolean checkInfoUser(User user) {
-        if((user.getStreet().isEmpty() || user.getStreet()==null) || (user.getWard().isEmpty()||user.getWard()==null) || (user.getCity() == null || user.getCity().isEmpty()) || (user.getDistrict() == null || user.getDistrict().isEmpty())
-                || (user.getCountry() == null || user.getCountry().isEmpty()) || (user.getPhone() == null || user.getPhone().isEmpty())){
-        return false;
-    }
+        if ((user.getStreet().isEmpty() || user.getStreet() == null) || (user.getWard().isEmpty() || user.getWard() == null) || (user.getCity() == null || user.getCity().isEmpty()) || (user.getDistrict() == null || user.getDistrict().isEmpty())
+                || (user.getCountry() == null || user.getCountry().isEmpty()) || (user.getPhone() == null || user.getPhone().isEmpty())) {
+            return false;
+        }
         return true;
     }
 
@@ -339,6 +340,24 @@ public class UserDAO extends DBContext {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public int createGoogleUser(User user) throws SQLException {
+        String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Avatar) "
+                + "VALUES ((SELECT COALESCE(MAX(Customer_ID), 0) + 1 FROM Customers), ?, ?, ?)";
+
+        Object[] params = {
+           user.getFullname(),
+           user.getEmail(),
+           user.getAvatar()
+        };
+
+        try {
+            return execQuery(createGoogleUser, params);
+        } catch (SQLException ex) {
+            System.out.println("Error while creatinguser: " + ex.getMessage());
+        }
+        return 0;
     }
 
 }

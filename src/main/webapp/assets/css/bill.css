@@ -1,0 +1,115 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Feb 25, 2025, 10:23:47 PM
+    Author     : Ma Tan Loc - CE181795
+*/
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: white;
+    color: #4a4a4a;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.header img {
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+.header .brand {
+    display: flex;
+    align-items: center;
+}
+.header .brand span {
+    font-size: 24px;
+    font-weight: bold;
+}
+.header .invoice-info {
+    text-align: right;
+}
+.header .invoice-info p {
+    margin: 0;
+}
+.header .invoice-info .date,
+.header .invoice-info .invoice-number {
+    font-size: 18px;
+    font-weight: bold;
+}
+.company-info {
+    background-color: #f0f4f8;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.company-info .supplier,
+.company-info .customer {
+    width: 48%;
+}
+.company-info .supplier p,
+.company-info .customer p {
+    margin: 0;
+}
+.company-info .supplier {
+    float: left;
+}
+.company-info .customer {
+    float: right;
+    text-align: right;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+table th,
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+table th {
+    text-align: left;
+    font-weight: bold;
+}
+table th:last-child,
+table td:last-child {
+    text-align: right;
+}
+.totals {
+    text-align: right;
+    margin-bottom: 20px;
+}
+.totals p {
+    margin: 0;
+}
+.totals .total {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+.payment-details,
+.notes {
+    margin-bottom: 20px;
+}
+.payment-details p,
+.notes p {
+    margin: 0;
+}
+.footer {
+    text-align: center;
+    color: #9b9b9b;
+    font-size: 12px;
+}

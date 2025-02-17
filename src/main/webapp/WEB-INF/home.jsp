@@ -105,7 +105,7 @@
                                 <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                    <div class="qty num-order">${counted != null ? counted: 0}</div>
+                                    <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
@@ -131,7 +131,7 @@
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
-                                                <img src="../assets/img/default-avatar.png" width="35px" height="35px" alt="Avatar User"/>
+                                                <img src="assets/img/default-avatar.png" width="35px" height="35px" alt="Avatar User"/>
                                             </div> 
                                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                 <div class="dropdown__menu--items">
@@ -307,7 +307,7 @@
                                             <div class="products-slick" data-nav="#slick-nav-1">
                                                 <!-- product -->                      
                                                 <c:forEach items="${products}" var="prod">
-                                                    <div class="product">
+                                                    <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                         <div class="product-img">
                                                             <img src="${prod.image}" alt="">
                                                             <div class="product-label">
@@ -337,13 +337,15 @@
                                                             </div>
                                                         </div>
                                                         <div class="add-to-cart">
-                                                            <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                                <i class="fa fa-shopping-cart"></i> add to cart
+                                                            <button class="add-to-cart-btn" 
+                                                                    style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                                <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
                                                             </button>                            
-                                                        </div>
+                                                        </div>                      
                                                     </div>                                                      
                                                 </c:forEach>    
-
+                                                
                                             </div>
                                             <div id="slick-nav-1" class="products-slick-nav"></div>
                                         </div>

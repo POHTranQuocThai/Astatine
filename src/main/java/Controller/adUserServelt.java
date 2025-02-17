@@ -79,7 +79,7 @@ public class adUserServelt extends HttpServlet {
         }
         if (idParam == null || idParam.isEmpty()) {
             if ("edit".equals(action)) {
-                request.getRequestDispatcher("/WEB-INF/adEditUser.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/adListUser.jsp").forward(request, response);
             }
             if ("delete".equals(action)) {
                 request.getRequestDispatcher("/WEB-INF/adListUser.jsp").forward(request, response);

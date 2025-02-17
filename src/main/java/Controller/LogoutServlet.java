@@ -41,7 +41,7 @@ public class LogoutServlet extends HttpServlet {
         int userId = 0;
         int num = 0;
         String view = request.getParameter("view");
-        HttpSession session = request.getSession(false); // false để không tạo mới nếu không có       
+        HttpSession session = request.getSession(); // false để không tạo mới nếu không có       
         User user = (User) session.getAttribute("User");
         if (user != null) {
             userId = user.getUserId();

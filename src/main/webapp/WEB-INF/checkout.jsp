@@ -101,20 +101,20 @@ Author     : Tran Quoc Thai - CE181618
                     <div class="col-md-3 clearfix">
                         <div class="header-ctn">
                             <!-- Cart -->
-                            <div class="dropdown" id="cart-dropdown" onsubmit="this.submit()">
+<!--                            <div class="dropdown" id="cart-dropdown" onsubmit="this.submit()">
                                 <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
                                     <div class="qty num-order">${counted != null ? counted: 0}</div>
                                 </a>
-                            </div>
+                            </div>-->
                             <!-- /Cart -->
-                            <!-- Account -->   
+                                <!-- Account -->   
                             <%
                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>;">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -207,7 +207,7 @@ Author     : Tran Quoc Thai - CE181618
                         <c:choose>
                             <c:when test="${not empty messOrder}"> 
                                 <div class="modal processing" id="orderProcessingModal">
-                                    <img src="../assets/img/Gif/brain.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
+                                    <img src="assets/img/Gif/brain.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
                                     <div class="modal-header" style="border: none; margin: 0;">Out of Product!</div>
                                     <div class="modal-body" style="border: none; margin: 0;">${messOrder}</div>
                                     <div class="modal-footer" style="border: none; margin: 0;">
@@ -217,7 +217,7 @@ Author     : Tran Quoc Thai - CE181618
                             </c:when>
                             <c:when test="${not empty messOrderSuccess}">
                                 <div class="modal processing" id="orderProcessingModal">
-                                    <img src="../assets/img/Gif/shopping.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
+                                    <img src="assets/img/Gif/shopping.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
                                     <div class="modal-header" style="border: none; margin: 0;">Order Successful!</div>
                                     <div class="modal-footer" style="border: none; margin: 0;">
                                         <button class="btn btn-cancel" onclick="window.location.href = 'Home'">Home</button>
@@ -237,16 +237,13 @@ Author     : Tran Quoc Thai - CE181618
                                     <div style="padding: 0;" class="col-md-1 billing-details--item">Image</div>
                                     <div class="col-md-4 billing-details--item">Name</div>
                                     <div class="col-md-2 billing-details--item">Price</div>
-                                    <div style="width: 80px;" class="col-md-2 billing-details--item">
-                                        Quantity
-                                    </div>
+                                    <div style="width: 80px;" class="col-md-2 billing-details--item">Quantity</div>
                                     <div style="padding-left: 30px;" class="col-md-3 billing-details--item">Total Price</div>
                                     <div class=" billing-details--item">
                                     </div>
                                 </div>
                                 <div class="cart-container">
                                     <c:set value="${discount}" var="dis"/>                    
-                                    <!-- Khởi tạo totalPrice bên ngoài vòng lặp -->
                                     <c:set var="shop" value="${SHOP}"></c:set>
                                     <c:set var="totalPrice" value="0" />
                                     <c:set var="count" value="0"/>
@@ -501,9 +498,9 @@ Author     : Tran Quoc Thai - CE181618
 
                                         </div>
                                     </div>
-                                    <a style="cursor: pointer;" onclick="checkSubmitOrder(${totalPrice - discounted + ship})" class="primary-btn order-submit">Place order</a>
+                                    <a style="cursor: ${shop.size() > 0 ? 'pointer' : 'not-allowed'};pointer-events: ${shop.size() > 0 ? 'auto' : 'none'};"  onclick="checkSubmitOrder(${totalPrice - discounted + ship})" class="primary-btn order-submit">Place order</a>
                                     <div class="modal" id="orderConfirmModal">
-                                        <img src="../assets/img/Gif/groundhog-day.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
+                                        <img src="assets/img/Gif/groundhog-day.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
                                         <div class="modal-header" style="border: none; margin: 0;">Are you sure?</div>
                                         <div class="modal-footer" style="border: none; margin: 0;">
                                             <button class="btn btn-cancel" id="cancelOrder">Cancel</button>

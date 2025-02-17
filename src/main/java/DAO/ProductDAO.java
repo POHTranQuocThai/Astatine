@@ -533,8 +533,8 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 int total = rs.getInt(1);
                 int countPage = 0;
-                countPage = total / 12;
-                if (total % 12 != 0) {
+                countPage = total / 6;
+                if (total % 6 != 0) {
                     countPage++;
                 }
                 return countPage;
@@ -550,7 +550,7 @@ public class ProductDAO extends DBContext {
                 + "join Brands b on p.Brand_ID = b.Brand_ID\n"
                 + "ORDER BY Product_ID \n"
                 + "OFFSET ? ROWS\n"
-                + "FETCH NEXT 12 ROWS ONLY";
+                + "FETCH NEXT 6 ROWS ONLY";
         List<Products> list = new ArrayList<>();
 
         // Thiết lập kết nối và chuẩn bị câu lệnh truy vấn

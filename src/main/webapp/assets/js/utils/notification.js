@@ -7,7 +7,7 @@ export function showToast(message, type) {
     Toastify({
         text: message,
         duration: 3000,
-        destination: "http://localhost:8080/Checkout",
+        destination: "http://localhost:8080/Astatine/Checkout",
         newWindow: true,
         close: true,
         stopOnFocus: true,

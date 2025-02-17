@@ -142,14 +142,6 @@
                                 <input type="text" id="city" name="city" value="${user.city}"><br>
                             </div>
 
-
-                            <div class="center-bottom">
-                                <div class="image_input">
-                                    <i class="bi bi-cloud-arrow-up-fill" style="font-size: 3rem"></i>
-                                    <input type="file" id="avatar" name="avatar" accept="image/*" hidden><br>
-                                    <label for="avatar">Choose a image:</label>
-                                </div>
-                            </div>  
                             <!-- Save Button -->
                             <button type="submit" class="submit-btn"  onclick="location.href = 'Profile?action=edit'">
                                 Save Changes

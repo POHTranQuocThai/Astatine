@@ -32,6 +32,12 @@ public class User {
         this.email = email;
     }
 
+    public User(String email, String fullname, String avatar) {
+        this.email = email;
+        this.fullname = fullname;
+        this.avatar = avatar;
+    }
+
     public User(int userId, String fullname, String street, String ward, String district, String city, String country, String password, String email, String avatar, String phone, boolean isAdmin) {
         this.userId = userId;
         this.fullname = fullname != null ? fullname : "";  // Nếu fullname là null thì gán giá trị mặc định là chuỗi rỗng
@@ -45,6 +51,14 @@ public class User {
         this.avatar = avatar != null ? avatar : "";
         this.phone = phone != null ? phone : "";
         this.isAdmin = isAdmin;  // Không cần kiểm tra vì boolean có giá trị mặc định là false
+    }
+
+    public User(String email, String hashedPassword, String fullname, String phone, String avatar, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public User(String hashedPassword, String phone, String avatar, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public int getUserId() {
