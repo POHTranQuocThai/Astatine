@@ -4,6 +4,9 @@
  */
 package Controller;
 
+import DAO.CartDAO;
+import DAO.GoogleLogin;
+import DAO.OrderDAO;
 import DAO.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -16,6 +19,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Cart;
+import model.GoogleAccount;
+import model.Products;
 import model.User;
 
 /**
@@ -36,7 +42,50 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/login.jsp").forward(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+
+        String code = request.getParameter("code");
+        if (code != null && !code.isEmpty()) {
+            String accessToken = GoogleLogin.getToken(code);
+            GoogleAccount googlePojo = GoogleLogin.getUserInfo(accessToken);
+
+            UserDAO uDAO = new UserDAO();
+            User user = uDAO.getUserByEmail(googlePojo.getEmail());
+
+            System.out.println("Google Account Info: " + googlePojo);
+            System.out.println("User from DB: " + user);
+
+            HttpSession session = request.getSession();
+
+            if (user == null) {
+                try {
+                    User newUser = new User();
+                    newUser.setFullname(googlePojo.getName());
+                    newUser.setEmail(googlePojo.getEmail());
+                    newUser.setAvatar(googlePojo.getPicture());
+
+                    System.out.println("User from DB: " + newUser);
+
+                    uDAO.createGoogleUser(newUser);
+
+                    user = uDAO.getUserByEmail(googlePojo.getEmail());
+
+                    session.setAttribute("User", user);
+                    session.setAttribute("email", user.getEmail());
+                    session.setAttribute("avatar", user.getAvatar());
+                    response.sendRedirect("Home");
+                } catch (SQLException ex) {
+                    Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                session.setAttribute("User", user);
+                session.setAttribute("email", user.getEmail());
+                session.setAttribute("avatar", user.getAvatar());
+                response.sendRedirect("Home");
+            }
+        } else {
+            request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -69,10 +118,20 @@ public class LoginServlet extends HttpServlet {
                 user.setIsAdmin(uDAO.checkIsAdmin(email));
                 HttpSession session = request.getSession();
                 user = uDAO.getUserByEmail(email);
-                session.setAttribute("email", user.getEmail());              
+                session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
                 session.setAttribute("avatar", user.getAvatar());
-
+                // Giữ lại giỏ hàng cũ nếu có
+                CartDAO sessionCart = (CartDAO) session.getAttribute("SHOP");
+                OrderDAO oDAO = new OrderDAO();
+                if (sessionCart != null) {
+                    for (Products p : oDAO.getProductByUserId(user.getUserId())) {
+                        if ("Pending".equals(p.getStatus())) {
+                            Cart c = new Cart(p, p.getQuanOrder());
+                            sessionCart.addToCart(c);
+                        }
+                    }
+                }
                 // Tạo cookie cho tên người dùng (không lưu mật khẩu)
                 Cookie u = new Cookie("user", email);
                 u.setMaxAge(60);  // Cookie tồn tại trong 60 giây

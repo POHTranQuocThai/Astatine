@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+  
+
     <servlet>
         <servlet-name>SignupServlet</servlet-name>
         <servlet-class>Controller.SignupServlet</servlet-class>
@@ -80,6 +82,10 @@
         <servlet-name>adCouponServlet</servlet-name>
         <servlet-class>Controller.adCouponServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Chat</servlet-name>
+        <servlet-class>Controller.ChatServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>adListServlet</servlet-name>
         <url-pattern>/List</url-pattern>
@@ -157,11 +163,15 @@
         <url-pattern>/Orders</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>HomeServlet</welcome-file>
+        <welcome-file>Home</welcome-file>
     </welcome-file-list>
     <servlet-mapping>
         <servlet-name>adCouponServlet</servlet-name>
         <url-pattern>/Coupon</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Chat</servlet-name>
+        <url-pattern>/Chat</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
+
 function showToast(message, type) {
     Toastify({
         text: message,
@@ -20,6 +21,7 @@ function showToast(message, type) {
 }
 
 function checkSubmitOrder(total) {
+    
     let payment1 = document.querySelector('#payment-1')
     let payment2 = document.querySelector('#payment-2')
 //    console.log(payment1);
