@@ -96,7 +96,7 @@ public class OrderServlet extends HttpServlet {
                 // Xóa giỏ hàng hoàn toàn
                 cDAO.clear(); // Xóa toàn bộ sản phẩm
                 session.removeAttribute("SHOP");  // Xóa session cũ
-//                session.invalidate(); // Hủy toàn bộ session
+
             } else {
                 // Nếu tồn kho không đủ, chuyển hướng về trang checkout
                 request.getRequestDispatcher("Checkout").forward(request, response);

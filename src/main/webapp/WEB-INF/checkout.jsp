@@ -101,19 +101,12 @@ Author     : Tran Quoc Thai - CE181618
                     <div class="col-md-3 clearfix">
                         <div class="header-ctn">
                             <!-- Cart -->
-                            <!--                            <div class="dropdown" id="cart-dropdown" onsubmit="this.submit()">
-                                                            <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
-                                                               aria-haspopup="true" aria-expanded="false">
-                                                                <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                                                <div class="qty num-order">${counted != null ? counted: 0}</div>
-                                                            </a>
-                                                        </div>-->
+
                             <!-- /Cart -->
-                            <!-- Account -->   
+                                <!-- Account -->   
                             <%
                                 String email = (String) session.getAttribute("email");
                             %>
-
                             <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>;">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
@@ -505,8 +498,8 @@ Author     : Tran Quoc Thai - CE181618
                                         <img src="" class="qr-code"/>
                                         <p class="paid-message"></p>
                                     </div>
-                                </div>
-                                        
+
+                                </div>                             
                                 <a style="cursor: ${shop.size() > 0 ? 'pointer' : 'not-allowed'};pointer-events: ${shop.size() > 0 ? 'auto' : 'none'};"  onclick="checkSubmitOrder(${totalLast})" class="primary-btn order-submit">Place order</a>
                                 <div class="modal" id="orderConfirmModal">
                                     <img src="../assets/img/Gif/groundhog-day.gif" alt="alt" style="width: 100px; height: 100px; margin: auto 0;"/>
@@ -514,6 +507,7 @@ Author     : Tran Quoc Thai - CE181618
                                     <div class="modal-footer" style="border: none; margin: 0;">
                                         <button class="btn btn-cancel" id="cancelOrder">Cancel</button>
                                         <button class="btn btn-ok" id="confirmOrder">OK</button>
+
                                     </div>
                                 </div>
 
