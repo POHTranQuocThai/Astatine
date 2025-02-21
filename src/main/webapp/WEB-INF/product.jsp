@@ -34,7 +34,7 @@
         <!-- Font Awesome Icon -->
         <link rel="stylesheet" href="assets/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        
+
         <!-- Icon New-->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -50,6 +50,8 @@
 
     <!-- HEADER -->
     <header>
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v22.0&appId=1136618881088660"></script>
         <!-- TOP HEADER -->
         <div id="top-header">
             <div class="container">
@@ -72,8 +74,8 @@
 
                 <!-- row -->
                 <div class="row" style="display: flex;
-                         justify-content: center;
-                         align-items: center;">
+                     justify-content: center;
+                     align-items: center;">
                     <!-- LOGO -->
                     <div class="col-md-3">
                         <div class="header-logo">
@@ -104,16 +106,16 @@
                                 <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                      <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
+                                    <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
                             <!-- Account -->   
                             <%
-                               String email = (String) session.getAttribute("email");
+                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -126,7 +128,7 @@
                                 </div>
                             </div>                                                           
                             <div>           
-                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;" %>">
+                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;"%>">
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
@@ -158,11 +160,7 @@
                             <!-- /Account -->
                             <c:set var="shop" value="${SHOP}"></c:set>
                             <c:set var="totalPrice" value="0" />
-                            <c:set var="count" value="0"/>
-                            <c:forEach items="${shop}" var="s">
-                                <c:set var="count" value="${count + 1}"/>
-                                <c:set var="counted" value="${count}"/>
-                            </c:forEach>
+
                         </div>
                     </div>
                     <!-- /ACCOUNT -->
@@ -284,7 +282,7 @@
                                     <span class="qty-down">-</span>
                                 </div>
                             </div>                         
-                            <button onclick="handleAddToCart(${prodDetails.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                            <button style="pointer-events: ${prodDetails.countInStock > 0 ? 'auto' : 'none'};" onclick="handleAddToCart(${prodDetails.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>${prodDetails.countInStock > 0 ? 'Add To Card':'Sold Out'}</button>
                         </div>
 
                         <ul class="product-links">
@@ -303,27 +301,345 @@
                     <!-- product tab nav -->
                     <ul class="tab-nav">
                         <li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
-
+                        <li><a data-toggle="tab" href="#tab2">Comments</a></li>
                     </ul>
                     <!-- /product tab nav -->
 
                     <!-- product tab content -->
                     <div class="tab-content">
-                        <!-- tab1  -->
+                        <!-- tab1 -->
                         <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>${prodDetails.description}
-                                    </p>
+                                    <p>${prodDetails.description}</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- /tab1  -->
+                        <!-- /tab1 -->
+                        <style>
+                            .comment-box {
+                                width: 100%;
+                                background: #fff;
+                                padding: 15px;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                            }
+                            .comment-header {
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
+                                margin-bottom: 10px;
+                            }
+                          
+                            .comment-header input,
+                            .comment-header textarea {
+                                width: 100%;
+                                padding: 8px;
+                                border: 1px solid #ccc;
+                                border-radius: 20px;
+                                outline: none;
+                            }
+                            .comment-header textarea {
+                                padding: 15px 15px;
+                                height: 50px;
+                                resize: none;
+                            }
+                            .comment-actions {
+                                display: flex;
+                                justify-content: flex-end;
+                                margin-top: 10px;
+                            }
+                            .comment-actions button {
+                                background: #007bff;
+                                color: white;
+                                border: none;
+                                padding: 8px 15px;
+                                border-radius: 20px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            }
+                            .comments {
+                                margin-top: 20px;
+                            }
+                            .comment {
+                                display: flex;
+                                align-items: flex-start;
+                                gap: 10px;
+                                background: #f8f9fa;
+                                padding: 10px;
+                                border-radius: 10px;
+                                margin-top: 10px;
+                                flex-direction: column;
+                            }
+                            .comment .avatar {
+                                min-width: 40px;
+                                height: 40px;
+                                background-color: #ccc;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 18px;
+                                color: white;
+                                font-weight: bold;
+                                flex-shrink: 0;
+                            }
+                            .comment-wrapper {
+                                display: flex;
+                                flex-direction: column;
+                                width: 100%;
+                            }
+                            .comment-name {
+                                text-align: start;
+                                font-size: 14px;
+                                font-weight: bold;
+                                margin-bottom: 3px;
+                            }
+                            .comment-content {
+                                text-align: start;
+                                background: #e9ecef;
+                                padding: 5px 12px;
+                                border-radius: 10px;
+                                word-wrap: break-word;
+                                white-space: pre-wrap;
+                                max-width: fit-content;
+                            }
+                            .comment-actions-bar {
+                                display: flex;
+                                gap: 10px;
+                                font-size: 14px;
+                                cursor: pointer;
+                                margin-top: 5px;
+                                margin-left: 3px;
+                                align-items: center;
+                            }
+                            .comment-actions-bar span:hover {
+                                text-decoration: underline;
+                            }
+                            .replies {
+                                margin-left: 50px;
+                                margin-top: 5px;
+                            }
+                            .reply-box {
+                                display: flex;
+                                gap: 5px;
+                                margin-top: 5px;
+                            }
+                            .reply-box input {
+                                flex: 1;
+                                padding: 5px;
+                                border: 1px solid #ccc;
+                                border-radius: 5px;
+                            }
+                            .reply-box button {
+                                padding: 5px 10px;
+                                border: none;
+                                border-radius: 5px;
+                                cursor: pointer;
+                            }
+                            .reply-box .send {
+                                background: #28a745;
+                                color: white;
+                            }
+                            .reply-box .cancel {
+                                background: #dc3545;
+                                color: white;
+                            }
+                            .comment-time {
+                                padding-top: 3px;
+                                font-size: 12px;
+                                color: darkgray;
+                            }
+                        </style>
 
+                        <!-- tab2 -->
+                        <div id="tab2" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="comment-box">                      
+                                        <div class="comment-header">
+                                            <textarea id="commentInput" placeholder="Comment..."></textarea>
+                                        </div>
+                                        <div class="comment-actions">
+                                            <button onclick="addComment()">Send</button>
+                                        </div>
+                                        <div class="comments" id="commentsList"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <script>
+
+                            // Lưu trạng thái like của từng người dùng (giả lập backend)
+                            var likedComments = {}; // Định dạng: { commentId: [userId1, userId2] }
+                            var userId = '${User.userId}'; // ✅ Gán giá trị từ backend vào biến
+
+                            function addComment() {
+                                if (!userId || userId === 'null' || userId === 'undefined') {
+                                    showToast('Please login to use comments!', '');
+                                    return;
+                                }
+                                var commentText = document.getElementById("commentInput").value.trim();
+                                if (commentText === "") {
+                                    showToast('Please enter the content!', '');
+                                    return;
+                                }
+
+                                // Tạo commentId duy nhất (có thể dùng ID từ backend nếu có)
+//                                var commentId = "cmt_" + new Date().getTime();
+
+                                var commentDiv = createCommentElement('${User.fullname}', commentText, userId);
+                                document.getElementById("commentsList").appendChild(commentDiv);
+                                document.getElementById("commentInput").value = "";
+                            }
+                            function timeAgo(timestamp) {
+                                const now = Date.now(); // Lấy timestamp hiện tại (milliseconds)
+                                const past = new Date(timestamp).getTime(); // Chuyển timestamp đầu vào về milliseconds
+
+                                if (isNaN(past))
+                                    return "Không xác định"; // Kiểm tra nếu timestamp không hợp lệ
+
+                                const diff = Math.floor((now - past) / 1000); // Chênh lệch thời gian tính theo giây
+
+                                if (diff < 60) {
+                                    return `${diff} giây trước`;
+                                } else if (diff < 3600) {
+                                    return `${Math.floor(diff / 60)} phút trước`;
+                                } else if (diff < 86400) {
+                                    return `${Math.floor(diff / 3600)} giờ trước`;
+                                } else {
+                                    return `${Math.floor(diff / 86400)} ngày trước`;
+                                }
+                            }
+
+
+
+
+// Hàm tạo bình luận
+                            // Hàm tạo bình luận
+                            function createCommentElement(name, content, commentId) {
+                                const now = new Date();
+                                const dateString = now.toLocaleDateString("vi-VN");
+                                const timeString = now.toLocaleTimeString("vi-VN", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                });
+
+                                var commentDiv = document.createElement("div");
+                                commentDiv.classList.add("comment");
+                                commentDiv.dataset.commentId = commentId; // Gán ID cho comment
+
+                                var avatarDiv = document.createElement("div");
+                                avatarDiv.classList.add("avatar");
+                                avatarDiv.textContent = "👤";
+                                var commentWrapper = document.createElement("div");
+                                commentWrapper.classList.add("comment-wrapper");
+                                var nameDiv = document.createElement("div");
+                                nameDiv.classList.add("comment-name");
+                                nameDiv.textContent = name;
+                                var contentDiv = document.createElement("div");
+                                contentDiv.classList.add("comment-content");
+                                contentDiv.textContent = content;
+                                var actionsBar = document.createElement("div");
+                                actionsBar.classList.add("comment-actions-bar");
+                                var likeButton = document.createElement("span");
+                                likeButton.textContent = "Like (0)";
+                                likeButton.onclick = function () {
+                                    toggleLike(commentId, likeButton);
+                                };
+                                var replyButton = document.createElement("span");
+                                replyButton.textContent = "Reply";
+                                replyButton.onclick = function () {
+                                    showReplyBox('${User.fullname}', commentDiv);
+                                };
+                                actionsBar.appendChild(likeButton);
+                                actionsBar.appendChild(replyButton);
+                                commentWrapper.appendChild(nameDiv);
+                                commentWrapper.appendChild(contentDiv);
+                                commentWrapper.appendChild(actionsBar);
+                                var repliesDiv = document.createElement("div");
+                                repliesDiv.classList.add("replies");
+
+                                var timeDiv = document.createElement("div");
+                                timeDiv.classList.add("comment-time");
+                                timeDiv.textContent = timeString + " " + dateString
+                                // Cập nhật thời gian hiển thị mỗi phút
+                                setInterval(() => {
+                                    timeDiv.textContent = timeAgo(timestamp);
+                                }, 60000);
+                                actionsBar.appendChild(timeDiv);
+
+                                commentDiv.appendChild(avatarDiv);
+                                commentDiv.appendChild(commentWrapper);
+                                commentDiv.appendChild(repliesDiv);
+                                return commentDiv;
+                            }
+// Hàm xử lý like/unlike
+                            function toggleLike(commentId, likeButton) {
+                                if (!likedComments[commentId]) {
+                                    likedComments[commentId] = new Set();
+                                }
+                                var userLikes = likedComments[commentId];
+                                console.log(userLikes.size);
+                                if (userLikes.has(commentId)) {
+                                    // Nếu đã like => Unlike
+                                    userLikes.delete(commentId);
+                                } else {
+                                    // Nếu chưa like => Like
+                                    userLikes.add(commentId);
+                                }
+                                console.log(userLikes.size);
+                                let num = userLikes.size
+                                // Cập nhật số lượng like
+                                likeButton.textContent = `Like (` + num + `)`;
+                                likeButton.style.color = userLikes.has(commentId) ? '#007bff' : 'black';
+                            }
+
+// Hiển thị khung trả lời
+                            function showReplyBox(name, commentDiv) {
+                                var existingReplyBox = commentDiv.querySelector(".reply-box");
+                                if (existingReplyBox) {
+                                    existingReplyBox.remove();
+                                    return;
+                                }
+
+                                var replyBox = document.createElement("div");
+                                replyBox.classList.add("reply-box");
+                                var replyInput = document.createElement("input");
+                                replyInput.placeholder = "Reply...";
+                                var sendButton = document.createElement("button");
+                                sendButton.classList.add("send");
+                                sendButton.textContent = "Send";
+                                sendButton.onclick = function () {
+                                    if (replyInput.value.trim() !== "") {
+                                        var replyDiv = createCommentElement(name, replyInput.value.trim(), "reply_" + new Date().getTime());
+                                        commentDiv.querySelector(".replies").appendChild(replyDiv);
+                                        replyBox.remove();
+                                    } else {
+                                        showToast('Please enter reply!', '');
+                                    }
+                                };
+                                var cancelButton = document.createElement("button");
+                                cancelButton.classList.add("cancel");
+                                cancelButton.textContent = "Cancel";
+                                cancelButton.onclick = function () {
+                                    replyBox.remove();
+                                };
+                                replyBox.appendChild(replyInput);
+                                replyBox.appendChild(sendButton);
+                                replyBox.appendChild(cancelButton);
+                                commentDiv.appendChild(replyBox);
+                            }
+
+                        </script>
+                        <!-- /tab2 -->
                     </div>
-                    <!-- /product tab content  -->
+                    <!-- /product tab content -->
                 </div>
             </div>
+
             <!-- /product tab -->
         </div>
         <!-- /row -->
@@ -348,7 +664,7 @@
             <!-- product -->
             <c:forEach items="${prodType}" var="type">
                 <div class="col-md-3 col-xs-6">        
-                    <div class="product">
+                    <div class="product" style="opacity: ${type.countInStock > 0 ? '1': '.5'}">
                         <div class="product-img">
                             <img src="${type.image}" alt="">                             
                         </div>
@@ -365,13 +681,36 @@
                             </div>
                         </div>
                         <div class="add-to-cart">
-                            <button onclick="handleAddToCart(${type.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                            <button class="add-to-cart-btn" 
+                                    style="pointer-events: ${type.countInStock > 0 ? 'auto' : 'none'};"
+                                    onclick="handleAddToCart(${type.productId}, '${email}')" >
+                                <i class="fa fa-shopping-cart"></i> ${type.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                            </button>       
                         </div>
                     </div>
                 </div>
             </c:forEach>
             <!-- /product -->
         </div>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            #chat-box {
+                width: 50%;
+                height: 300px;
+                border: 1px solid #ccc;
+                overflow-y: auto;
+                margin: 10px auto;
+                padding: 10px;
+            }
+            input, button {
+                padding: 10px;
+                margin: 5px;
+            }
+        </style>
+
         <!-- /row -->
     </div>
     <!-- /container -->

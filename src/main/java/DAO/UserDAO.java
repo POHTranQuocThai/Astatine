@@ -152,7 +152,7 @@ public class UserDAO extends DBContext {
         Object[] params = {userId};
         try ( ResultSet rs = execSelectQuery(sql, params)) {
             if (rs.next()) {
-                return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getBoolean(12));
+                return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),  rs.getBoolean(11));
             }
         } catch (Exception e) {
         }
@@ -183,9 +183,9 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password(encrypt)
                         rs.getString(9), // Email
-                        rs.getString(10), // Avatar User
-                        rs.getString(11), // Contacts                                      
-                        rs.getBoolean(12) // Check Admin(T/F)                                        
+                       // rs.getString(10), // Avatar User
+                        rs.getString(10), // Contacts                                      
+                        rs.getBoolean(11) // Check Admin(T/F)                                        
                 ));
             }
         } catch (Exception e) {
@@ -213,9 +213,9 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password (hashed)
                         rs.getString(9), // Email
-                        rs.getString(10), // Avatar
-                        rs.getString(11), // Contacts
-                        rs.getBoolean(12) // Admin flag
+                        //rs.getString(10), // Avatar
+                        rs.getString(10), // Contacts
+                        rs.getBoolean(11) // Admin flag
                 );
             }
         } catch (SQLException e) {
@@ -236,7 +236,7 @@ public class UserDAO extends DBContext {
             user.getCountry(), // country
             user.getPassword(), // password
             user.getEmail(), // email
-            user.getAvatar(), // avatar URL
+           // user.getAvatar(), // avatar URL
             user.getPhone(), // phone (updated from 'contacts')
             user.isIsAdmin(), // isAdmin flag
             user.getUserId() // customer_id
@@ -269,15 +269,14 @@ public class UserDAO extends DBContext {
                 user = new User(
                         rs.getInt("Customer_ID"), // ID
                         rs.getString("customer_name"), // Fullname
-                        rs.getString("street"), // Street
-                        rs.getString("ward"), // Ward
-                        rs.getString("district"), // District
-                        rs.getString("city"), // City
-                        rs.getString("country"), // Country
-                        rs.getString("password"), // Password (hashed)
-                        rs.getString("email"), // Email
-                        rs.getString("avatar"), // Avatar
-                        rs.getString("phone"), // Phone
+                        rs.getString("email"), // Street
+                        rs.getString("password"), // Ward
+                        rs.getString("phone"), // District
+                        rs.getString("street"), // City
+                        rs.getString("ward"), // Country
+                        rs.getString("district"), // Password (hashed)
+                        rs.getString("city"), // Email
+                        rs.getString("country"), // Avatar
                         rs.getBoolean("isAdmin") // Admin flag
                 );
             }
@@ -330,15 +329,33 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password (hashed)
                         rs.getString(9), // Email
-                        image[0], // Avatar
-                        rs.getString(11), // Contacts
-                        rs.getBoolean(12) // Admin flag
+                        //image[0], // Avatar
+                        rs.getString(10), // Contacts
+                        rs.getBoolean(11) // Admin flag
                 ));
             }
             return list;
         } catch (Exception e) {
         }
         return null;
+    }
+
+
+    public int createGoogleUser(User user) throws SQLException {
+        String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Avatar) "
+                + "VALUES ((SELECT COALESCE(MAX(Customer_ID), 0) + 1 FROM Customers), ?, ?, ?)";
+
+        Object[] params = {
+           user.getFullname(),
+           user.getEmail(),
+        };
+
+        try {
+            return execQuery(createGoogleUser, params);
+        } catch (SQLException ex) {
+            System.out.println("Error while creatinguser: " + ex.getMessage());
+        }
+        return 0;
     }
 
 }

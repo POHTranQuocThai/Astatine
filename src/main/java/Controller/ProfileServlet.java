@@ -140,8 +140,6 @@ public class ProfileServlet extends HttpServlet {
                     user.setCity(city);
                     user.setCountry(country);
                     user.setPhone(phone);
-                    user.setAvatar(imagePaths.toString());
-
                     int result = uDao.updateUser(user);
                     if (result > 0) {
                         // Successful update; redirect to the profile servlet to refresh the data
