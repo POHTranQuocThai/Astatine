@@ -157,7 +157,7 @@ public class adUserServelt extends HttpServlet {
                 }
             }
 
-            User user = new User(userId, fullname, street, ward, district, city, country, password, email, imagePaths.toString(), phone, isAdmin);
+            User user = new User(userId, fullname, street, ward, district, city, country, password, email, phone, isAdmin);
 
             try {
                 uDAO.updateUser(user);

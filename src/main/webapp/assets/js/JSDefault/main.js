@@ -146,4 +146,9 @@
             priceSlider.noUiSlider.set([null, value]);
         }
     }
+    
 })(jQuery);
+function formatVietnameseCurrency(number) {
+    // Chuyển số thành chuỗi, thêm dấu chấm phân cách hàng nghìn, và thêm đơn vị VNĐ
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+}

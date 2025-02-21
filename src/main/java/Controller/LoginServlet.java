@@ -69,10 +69,11 @@ public class LoginServlet extends HttpServlet {
                 user.setIsAdmin(uDAO.checkIsAdmin(email));
                 HttpSession session = request.getSession();
                 user = uDAO.getUserByEmail(email);
+                System.out.println("user"+ user);
                 session.setAttribute("email", user.getEmail());              
                 session.setAttribute("User", user);
-                session.setAttribute("avatar", user.getAvatar());
-
+                //session.setAttribute("avatar", user.getAvatar());
+                System.out.println("user"+ user);
                 // Tạo cookie cho tên người dùng (không lưu mật khẩu)
                 Cookie u = new Cookie("user", email);
                 u.setMaxAge(60);  // Cookie tồn tại trong 60 giây

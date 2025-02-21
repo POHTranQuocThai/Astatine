@@ -104,7 +104,7 @@
                                     <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                        aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                        <div class="qty num-order">${counted != null ? counted: 0}</div>
+                                        <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
@@ -509,17 +509,15 @@
                                 <!-- /product -->
                             </div>
                             <!-- /store products -->
-
-                            
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination"> 
-                                    <c:forEach begin="1" end="${a.getNumberPage()}" var="i">
-                                        <li class="page-item ${indexPage == i?"active":""}">
-                                            <a href="Store?page=${i}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination"> 
+                                        <c:forEach begin="1" end="${a.getNumberPage()}" var="i">
+                                            <li class="page-item ${indexPage == i ? 'active' : ''}">
+                                                <a href="Store?brand=${param.brand}&page=${i}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                     </ul>
+                                </nav>                           
                         </div>
                         <!-- /STORE -->
                     </div>
@@ -528,9 +526,7 @@
                 <!-- /container -->
             </div>
             <!-- /SECTION -->
-
     </main>
-
     <!-- FOOTER -->
     <footer id="footer">
         <!-- top footer -->
