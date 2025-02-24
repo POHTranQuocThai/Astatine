@@ -34,7 +34,7 @@
         <!-- Font Awesome Icon -->
         <link rel="stylesheet" href="assets/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        
+
         <!-- Icon New-->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -50,6 +50,8 @@
 
     <!-- HEADER -->
     <header>
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v22.0&appId=1136618881088660"></script>
         <!-- TOP HEADER -->
         <div id="top-header">
             <div class="container">
@@ -72,8 +74,8 @@
 
                 <!-- row -->
                 <div class="row" style="display: flex;
-                         justify-content: center;
-                         align-items: center;">
+                     justify-content: center;
+                     align-items: center;">
                     <!-- LOGO -->
                     <div class="col-md-3">
                         <div class="header-logo">
@@ -104,16 +106,16 @@
                                 <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                    <div class="qty num-order">${counted != null ? counted: 0}</div>
+                                    <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
                             <!-- Account -->   
                             <%
-                               String email = (String) session.getAttribute("email");
+                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -126,7 +128,7 @@
                                 </div>
                             </div>                                                           
                             <div>           
-                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;" %>">
+                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;"%>">
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
@@ -158,11 +160,7 @@
                             <!-- /Account -->
                             <c:set var="shop" value="${SHOP}"></c:set>
                             <c:set var="totalPrice" value="0" />
-                            <c:set var="count" value="0"/>
-                            <c:forEach items="${shop}" var="s">
-                                <c:set var="count" value="${count + 1}"/>
-                                <c:set var="counted" value="${count}"/>
-                            </c:forEach>
+
                         </div>
                     </div>
                     <!-- /ACCOUNT -->
@@ -284,7 +282,7 @@
                                     <span class="qty-down">-</span>
                                 </div>
                             </div>                         
-                            <button onclick="handleAddToCart(${prodDetails.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                            <button style="pointer-events: ${prodDetails.countInStock > 0 ? 'auto' : 'none'};" onclick="handleAddToCart(${prodDetails.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>${prodDetails.countInStock > 0 ? 'Add To Card':'Sold Out'}</button>
                         </div>
 
                         <ul class="product-links">
@@ -303,27 +301,36 @@
                     <!-- product tab nav -->
                     <ul class="tab-nav">
                         <li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
-
+                        <li><a data-toggle="tab" href="#tab2">Comments</a></li>
                     </ul>
                     <!-- /product tab nav -->
 
                     <!-- product tab content -->
                     <div class="tab-content">
-                        <!-- tab1  -->
+                        <!-- tab1 -->
                         <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>${prodDetails.description}
-                                    </p>
+                                    <p>${prodDetails.description}</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- /tab1  -->
+                        <!-- /tab1 -->
 
+                        <!-- tab2 -->
+                        <div id="tab2" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="fb-comments" data-href="https://pohtranquocthai.github.io/Astatine/Products?view=prod-details&id=${prodDetails.productId}" data-width="100%" data-numposts="5"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /tab2 -->
                     </div>
-                    <!-- /product tab content  -->
+                    <!-- /product tab content -->
                 </div>
             </div>
+
             <!-- /product tab -->
         </div>
         <!-- /row -->
@@ -348,7 +355,7 @@
             <!-- product -->
             <c:forEach items="${prodType}" var="type">
                 <div class="col-md-3 col-xs-6">        
-                    <div class="product">
+                    <div class="product" style="opacity: ${type.countInStock > 0 ? '1': '.5'}">
                         <div class="product-img">
                             <img src="${type.image}" alt="">                             
                         </div>
@@ -365,13 +372,36 @@
                             </div>
                         </div>
                         <div class="add-to-cart">
-                            <button onclick="handleAddToCart(${type.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                            <button class="add-to-cart-btn" 
+                                    style="pointer-events: ${type.countInStock > 0 ? 'auto' : 'none'};"
+                                    onclick="handleAddToCart(${type.productId}, '${email}')" >
+                                <i class="fa fa-shopping-cart"></i> ${type.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                            </button>       
                         </div>
                     </div>
                 </div>
             </c:forEach>
             <!-- /product -->
         </div>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            #chat-box {
+                width: 50%;
+                height: 300px;
+                border: 1px solid #ccc;
+                overflow-y: auto;
+                margin: 10px auto;
+                padding: 10px;
+            }
+            input, button {
+                padding: 10px;
+                margin: 5px;
+            }
+        </style>
+        
         <!-- /row -->
     </div>
     <!-- /container -->

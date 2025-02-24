@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -338,6 +339,25 @@ public class UserDAO extends DBContext {
         } catch (Exception e) {
         }
         return null;
+    }
+
+}
+    public int createGoogleUser(User user) throws SQLException {
+        String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Avatar) "
+                + "VALUES ((SELECT COALESCE(MAX(Customer_ID), 0) + 1 FROM Customers), ?, ?, ?)";
+
+        Object[] params = {
+           user.getFullname(),
+           user.getEmail(),
+           user.getAvatar()
+        };
+
+        try {
+            return execQuery(createGoogleUser, params);
+        } catch (SQLException ex) {
+            System.out.println("Error while creatinguser: " + ex.getMessage());
+        }
+        return 0;
     }
 
 }

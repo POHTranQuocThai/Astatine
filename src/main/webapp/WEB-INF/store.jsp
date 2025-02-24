@@ -104,16 +104,17 @@
                                     <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                        aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                        <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
+
+                                       <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
                             <!-- Account -->   
                             <%
-                               String email = (String) session.getAttribute("email");
+                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -126,7 +127,7 @@
                                 </div>
                             </div>                                                           
                             <div>           
-                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;" %>">
+                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;"%>">
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
@@ -299,25 +300,25 @@
                         <div class="store-filter clearfix">
                             <div class="store-sort">
                                 <%
-                                      // Lấy các giá trị từ request (nếu có)
-                                          String option = request.getParameter("option");
-                                          String show = request.getParameter("show");
+                                    // Lấy các giá trị từ request (nếu có)
+                                    String option = request.getParameter("option");
+                                    String show = request.getParameter("show");
                                 %>
                                 <form action="<c:url value='Store' />" method="get">
                                     <label>
                                         Sort by:
                                         <select class="input-select" name="option" onchange="this.form.submit()">
                                             <option value="" disabled selected>Select option</option>
-                                            <option value="sortName" <%= "sortName".equals(option) ? "selected" : "" %>>Name</option>
-                                            <option value="sortPrice" <%= "sortPrice".equals(option) ? "selected" : "" %>>Price</option>
+                                            <option value="sortName" <%= "sortName".equals(option) ? "selected" : ""%>>Name</option>
+                                            <option value="sortPrice" <%= "sortPrice".equals(option) ? "selected" : ""%>>Price</option>
                                         </select>
                                     </label>
 
                                     <label>
                                         Show:
                                         <select class="input-select" name="show" onchange="this.form.submit()">                    
-                                            <option value="up" <%= "up".equals(show) ? "selected" : "" %>>Up</option>
-                                            <option value="down" <%= "down".equals(show) ? "selected" : "" %>>Down</option>
+                                            <option value="up" <%= "up".equals(show) ? "selected" : ""%>>Up</option>
+                                            <option value="down" <%= "down".equals(show) ? "selected" : ""%>>Down</option>
                                         </select>
                                     </label>
                                 </form>                         
@@ -334,7 +335,7 @@
                                     <c:when test="${not empty getByPrice}">
                                         <c:forEach items="${getByPrice}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
@@ -356,9 +357,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                          
                                                     </div>
                                                 </div>
                                             </div>
@@ -369,7 +372,7 @@
                                     <c:when test="${not empty search}">
                                         <c:forEach items="${search}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
@@ -391,9 +394,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                                
                                                     </div>
                                                 </div>
                                             </div>
@@ -402,7 +407,7 @@
                                     <c:when test="${not empty brands}">
                                         <c:forEach items="${brands}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
@@ -424,9 +429,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                              
                                                     </div>
                                                 </div>
                                             </div>
@@ -435,7 +442,7 @@
                                     <c:when test="${not empty category}">
                                         <c:forEach items="${category}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
@@ -457,9 +464,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                                 
                                                     </div>
                                                 </div>
                                             </div>
@@ -468,7 +477,7 @@
                                     <c:when test="${not empty products}">
                                         <c:forEach items="${products}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
@@ -490,9 +499,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                                
                                                     </div>
                                                 </div>
                                             </div>
@@ -509,6 +520,7 @@
                                 <!-- /product -->
                             </div>
                             <!-- /store products -->
+
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination"> 
                                         <c:forEach begin="1" end="${a.getNumberPage()}" var="i">

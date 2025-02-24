@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import model.Cart;
-
 import model.Products;
 import model.User;
 
@@ -46,7 +45,7 @@ public class CheckoutServlet extends HttpServlet {
         String dis = request.getParameter("dis");
         int userId = 0;
 
-        HttpSession session = request.getSession(false); // false để không tạo mới nếu không có      
+        HttpSession session = request.getSession(); // false để không tạo mới nếu không có      
         OrderDAO oDAO = new OrderDAO();
         CartDAO cDAO = (CartDAO) session.getAttribute("SHOP");
         if (session != null) {
@@ -67,15 +66,7 @@ public class CheckoutServlet extends HttpServlet {
                     }
                 }
                 session.setAttribute("SHOP", cDAO);  // Lưu cDAO vào session
-//                // Nếu có sản phẩm được thêm, hiển thị thông báo
-//                if (hasAdded) {
-////                    session.setAttribute("toastMessage", "Add Order Successfully!");
-////                    session.setAttribute("toastType", "success");
-//
-//                    request.getSession().setAttribute("toastMessage", "Đăng nhập thành công!");
-//                    request.getSession().setAttribute("toastType", "success");
-//                    response.sendRedirect("home.jsp");
-//                }
+
             }
 
         }

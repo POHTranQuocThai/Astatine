@@ -44,7 +44,7 @@ public class ProductServlet extends HttpServlet {
         String view = request.getParameter("view");
         int userId = 0;
         // Kiểm tra nếu cả danh sách tất cả sản phẩm và danh sách sản phẩm bán chạy không rỗng
-        HttpSession session = request.getSession(false); // false để không tạo mới nếu không có      
+        HttpSession session = request.getSession(); // false để không tạo mới nếu không có      
         CartDAO cDAO = (CartDAO) session.getAttribute("SHOP");
         if (view.equals("prod-details")) {
             int id = Integer.parseInt(request.getParameter("id"));

@@ -26,13 +26,14 @@ const handleAddToCart = (productId, email) => {
     // Kiểm tra nếu phần tử #quantity tồn tại
     let numElement = document.querySelector('#quantity');
     let num = numElement ? numElement.value : 1; // Nếu không tìm thấy phần tử, đặt giá trị mặc định là 1
-
+   
     console.log(email)
     if (!email) {
         showToast('Please log in to order!');
     } else {
         showToast('Add to Cart Successfull!', 'success')
     }
+   
     fetch('Checkout', {
         method: 'post', // viết chữ thường cho method
         headers: {
@@ -41,6 +42,9 @@ const handleAddToCart = (productId, email) => {
         body: `id=${productId}&num=${num}`
     })
             .then(response => {
+                 setTimeout(()=>{
+                      window.location.reload()
+                 },600)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -52,6 +56,7 @@ const handleAddToCart = (productId, email) => {
                 if (data.success) {
                     // Cập nhật số lượng giỏ hàng hiển thị trên trang
                     document.querySelector('#num-order').textContent = data.numOrder;
+                   
                 }
                 console.log('Product added to cart:', data);
             })

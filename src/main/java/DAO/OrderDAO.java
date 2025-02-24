@@ -75,31 +75,33 @@ public class OrderDAO extends DBContext {
         int rowsAffected = 0;
 
         // Lấy Order_ID lớn nhất hiện có (giả sử mỗi đơn hàng chỉ có một mã duy nhất)
-        String sqlOrderId = "SELECT ISNULL(MAX(order_Id), 0) as nextId FROM Orders";
-        int orderId = 0;
-        try ( ResultSet rs = execSelectQuery(sqlOrderId)) {
-            if (rs.next()) {
-                orderId = rs.getInt("nextId");
+        String sqlOrderId = "SELECT Order_Id FROM Orders WHERE Customer_ID = ? AND status = 'Pending'";
+        List<Integer> pendingOrderIds = new ArrayList<>();
+        try ( ResultSet rs = execSelectQuery(sqlOrderId, new Object[]{userId})) {
+            while (rs.next()) { // 🛠 SỬA LỖI: Lấy tất cả Order_ID, không chỉ lấy 1 cái
+                pendingOrderIds.add(rs.getInt(1));
             }
         }
 
         String sql = "UPDATE Orders SET street = ?, ward = ?, district = ?, city = ?, country = ?, phone = ?, order_date = GETDATE(), status = ?, totalPrice = ?, email = ? WHERE Order_ID = ?";
         String updateStock = "UPDATE products SET countinstock = ?, selled = ? WHERE Product_ID = ?";
 
-        // Tham số cho câu lệnh cập nhật Orders
-        Object[] params = {
-            order.getStreet(),
-            order.getWard(),
-            order.getDistrict(),
-            order.getCity(),
-            order.getCountry(),
-            order.getPhone(),
-            order.getStatus(),
-            order.getTotalPrice(),
-            order.getEmail(),
-            orderId // Sử dụng orderId lấy từ câu lệnh SELECT
-        };
-
+        for (int orderId : pendingOrderIds) {
+            Object[] orderParams = {
+                order.getStreet(),
+                order.getWard(),
+                order.getDistrict(),
+                order.getCity(),
+                order.getCountry(),
+                order.getPhone(),
+                order.getStatus(),
+                order.getTotalPrice(),
+                order.getEmail(),
+                orderId
+            };
+            rowsAffected += execQuery(sql, orderParams);
+            System.out.println("row"+rowsAffected);
+        }
         try {
             for (Order cartOrder : cDAO.getProductsInCart(userId)) {
                 Products prod = pDAO.getProductById(cartOrder.getProductId());
@@ -121,7 +123,6 @@ public class OrderDAO extends DBContext {
             }
 
             // Thực thi câu lệnh UPDATE cho Orders
-            rowsAffected += execQuery(sql, params);
         } catch (SQLException e) {
             e.printStackTrace(); // In ra lỗi nếu có
         }
