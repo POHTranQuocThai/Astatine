@@ -118,6 +118,7 @@ public class LoginServlet extends HttpServlet {
                 user.setIsAdmin(uDAO.checkIsAdmin(email));
                 HttpSession session = request.getSession();
                 user = uDAO.getUserByEmail(email);
+
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
                 session.setAttribute("avatar", user.getAvatar());
