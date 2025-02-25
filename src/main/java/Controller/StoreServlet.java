@@ -45,15 +45,37 @@ public class StoreServlet extends HttpServlet {
         String minPriceParam = request.getParameter("price-min");
         String maxPriceParam = request.getParameter("price-max");
         
+       // Phân trang
         String page = request.getParameter("page");
 
-        if (page == null || page.trim().isEmpty()) {
-            page = "1";
+        // Nếu page = null hoặc rỗng, mặc định là trang 1
+        int indexPage = 1;
+        try {
+            indexPage = (page == null || page.trim().isEmpty()) ? 1 : Integer.parseInt(page);
+        } catch (NumberFormatException e) {
+            e.printStackTrace(); // Xử lý lỗi nếu page không phải số
         }
-        int indexPage = Integer.parseInt(page);
 
-        List<Products> list = pDAO.getPaging(indexPage);
+//        System.out.println("Requested Page: " + indexPage);
+//        System.out.println("Brand: " + brand);
 
+        // Gọi phương thức getPaging() mới
+        List<Products> list = pDAO.getPaging(indexPage, brand);
+
+        // Debug danh sách sản phẩm để kiểm tra lỗi trùng lặp
+        for (Products p : list) {
+            System.out.println("Product ID: " + p.getProductId() + " - Name: " + p.getProductName());
+        }
+
+        // Truyền dữ liệu vào request để hiển thị trong store.jsp
+        request.setAttribute("products", list);
+        request.setAttribute("brand", pDAO.getAllBrand());
+        request.setAttribute("type", pDAO.getAllType());
+        request.setAttribute("topSelled", pDAO.getTopSelled());
+        request.setAttribute("indexPage", indexPage); // Gửi số trang hiện tại
+
+        // Chuyển tiếp sang trang store.jsp
+        request.getRequestDispatcher("/WEB-INF/store.jsp").forward(request, response);
         // Gán giá trị mặc định nếu input không có giá trị
         int minPrice = 0;
         int maxPrice = Integer.MAX_VALUE;

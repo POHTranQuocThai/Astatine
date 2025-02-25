@@ -158,6 +158,7 @@ public class adUserServelt extends HttpServlet {
 
             User user = new User(userId, fullname, email, password, phone, street, ward, district, city, country, isAdmin);
 
+
             try {
                 uDAO.updateUser(user);
             } catch (SQLException ex) {

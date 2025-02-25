@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : product
     Created on : Oct 14, 2024, 8:12:45 PM
@@ -269,7 +270,7 @@
                             </div>                      
                         </div>
                         <div>
-                            <h3 class="product-price">$${prodDetails.price} <del class="product-old-price">$990.00</del></h3>
+                            <h3 class="product-price">$${prodDetails.price} <del class="product-old-price"></del></h3>
                             <span class="product-available">In Stock ${prodDetails.countInStock}</span>
                         </div>
 
@@ -316,324 +317,15 @@
                             </div>
                         </div>
                         <!-- /tab1 -->
-                        <style>
-                            .comment-box {
-                                width: 100%;
-                                background: #fff;
-                                padding: 15px;
-                                border-radius: 8px;
-                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                            }
-                            .comment-header {
-                                display: flex;
-                                align-items: center;
-                                gap: 10px;
-                                margin-bottom: 10px;
-                            }
-                          
-                            .comment-header input,
-                            .comment-header textarea {
-                                width: 100%;
-                                padding: 8px;
-                                border: 1px solid #ccc;
-                                border-radius: 20px;
-                                outline: none;
-                            }
-                            .comment-header textarea {
-                                padding: 15px 15px;
-                                height: 50px;
-                                resize: none;
-                            }
-                            .comment-actions {
-                                display: flex;
-                                justify-content: flex-end;
-                                margin-top: 10px;
-                            }
-                            .comment-actions button {
-                                background: #007bff;
-                                color: white;
-                                border: none;
-                                padding: 8px 15px;
-                                border-radius: 20px;
-                                cursor: pointer;
-                                font-size: 14px;
-                            }
-                            .comments {
-                                margin-top: 20px;
-                            }
-                            .comment {
-                                display: flex;
-                                align-items: flex-start;
-                                gap: 10px;
-                                background: #f8f9fa;
-                                padding: 10px;
-                                border-radius: 10px;
-                                margin-top: 10px;
-                                flex-direction: column;
-                            }
-                            .comment .avatar {
-                                min-width: 40px;
-                                height: 40px;
-                                background-color: #ccc;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                font-size: 18px;
-                                color: white;
-                                font-weight: bold;
-                                flex-shrink: 0;
-                            }
-                            .comment-wrapper {
-                                display: flex;
-                                flex-direction: column;
-                                width: 100%;
-                            }
-                            .comment-name {
-                                text-align: start;
-                                font-size: 14px;
-                                font-weight: bold;
-                                margin-bottom: 3px;
-                            }
-                            .comment-content {
-                                text-align: start;
-                                background: #e9ecef;
-                                padding: 5px 12px;
-                                border-radius: 10px;
-                                word-wrap: break-word;
-                                white-space: pre-wrap;
-                                max-width: fit-content;
-                            }
-                            .comment-actions-bar {
-                                display: flex;
-                                gap: 10px;
-                                font-size: 14px;
-                                cursor: pointer;
-                                margin-top: 5px;
-                                margin-left: 3px;
-                                align-items: center;
-                            }
-                            .comment-actions-bar span:hover {
-                                text-decoration: underline;
-                            }
-                            .replies {
-                                margin-left: 50px;
-                                margin-top: 5px;
-                            }
-                            .reply-box {
-                                display: flex;
-                                gap: 5px;
-                                margin-top: 5px;
-                            }
-                            .reply-box input {
-                                flex: 1;
-                                padding: 5px;
-                                border: 1px solid #ccc;
-                                border-radius: 5px;
-                            }
-                            .reply-box button {
-                                padding: 5px 10px;
-                                border: none;
-                                border-radius: 5px;
-                                cursor: pointer;
-                            }
-                            .reply-box .send {
-                                background: #28a745;
-                                color: white;
-                            }
-                            .reply-box .cancel {
-                                background: #dc3545;
-                                color: white;
-                            }
-                            .comment-time {
-                                padding-top: 3px;
-                                font-size: 12px;
-                                color: darkgray;
-                            }
-                        </style>
 
                         <!-- tab2 -->
                         <div id="tab2" class="tab-pane fade">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="comment-box">                      
-                                        <div class="comment-header">
-                                            <textarea id="commentInput" placeholder="Comment..."></textarea>
-                                        </div>
-                                        <div class="comment-actions">
-                                            <button onclick="addComment()">Send</button>
-                                        </div>
-                                        <div class="comments" id="commentsList"></div>
-                                    </div>
+                                    <div class="fb-comments" data-href="https://pohtranquocthai.github.io/Astatine/Products?view=prod-details&id=${prodDetails.productId}" data-width="100%" data-numposts="5"></div>
                                 </div>
                             </div>
                         </div>
-
-
-                        <script>
-
-                            // Lưu trạng thái like của từng người dùng (giả lập backend)
-                            var likedComments = {}; // Định dạng: { commentId: [userId1, userId2] }
-                            var userId = '${User.userId}'; // ✅ Gán giá trị từ backend vào biến
-
-                            function addComment() {
-                                if (!userId || userId === 'null' || userId === 'undefined') {
-                                    showToast('Please login to use comments!', '');
-                                    return;
-                                }
-                                var commentText = document.getElementById("commentInput").value.trim();
-                                if (commentText === "") {
-                                    showToast('Please enter the content!', '');
-                                    return;
-                                }
-
-                                // Tạo commentId duy nhất (có thể dùng ID từ backend nếu có)
-//                                var commentId = "cmt_" + new Date().getTime();
-
-                                var commentDiv = createCommentElement('${User.fullname}', commentText, userId);
-                                document.getElementById("commentsList").appendChild(commentDiv);
-                                document.getElementById("commentInput").value = "";
-                            }
-                            function timeAgo(timestamp) {
-                                const now = Date.now(); // Lấy timestamp hiện tại (milliseconds)
-                                const past = new Date(timestamp).getTime(); // Chuyển timestamp đầu vào về milliseconds
-
-                                if (isNaN(past))
-                                    return "Không xác định"; // Kiểm tra nếu timestamp không hợp lệ
-
-                                const diff = Math.floor((now - past) / 1000); // Chênh lệch thời gian tính theo giây
-
-                                if (diff < 60) {
-                                    return `${diff} giây trước`;
-                                } else if (diff < 3600) {
-                                    return `${Math.floor(diff / 60)} phút trước`;
-                                } else if (diff < 86400) {
-                                    return `${Math.floor(diff / 3600)} giờ trước`;
-                                } else {
-                                    return `${Math.floor(diff / 86400)} ngày trước`;
-                                }
-                            }
-
-
-
-
-// Hàm tạo bình luận
-                            // Hàm tạo bình luận
-                            function createCommentElement(name, content, commentId) {
-                                const now = new Date();
-                                const dateString = now.toLocaleDateString("vi-VN");
-                                const timeString = now.toLocaleTimeString("vi-VN", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                });
-
-                                var commentDiv = document.createElement("div");
-                                commentDiv.classList.add("comment");
-                                commentDiv.dataset.commentId = commentId; // Gán ID cho comment
-
-                                var avatarDiv = document.createElement("div");
-                                avatarDiv.classList.add("avatar");
-                                avatarDiv.textContent = "👤";
-                                var commentWrapper = document.createElement("div");
-                                commentWrapper.classList.add("comment-wrapper");
-                                var nameDiv = document.createElement("div");
-                                nameDiv.classList.add("comment-name");
-                                nameDiv.textContent = name;
-                                var contentDiv = document.createElement("div");
-                                contentDiv.classList.add("comment-content");
-                                contentDiv.textContent = content;
-                                var actionsBar = document.createElement("div");
-                                actionsBar.classList.add("comment-actions-bar");
-                                var likeButton = document.createElement("span");
-                                likeButton.textContent = "Like (0)";
-                                likeButton.onclick = function () {
-                                    toggleLike(commentId, likeButton);
-                                };
-                                var replyButton = document.createElement("span");
-                                replyButton.textContent = "Reply";
-                                replyButton.onclick = function () {
-                                    showReplyBox('${User.fullname}', commentDiv);
-                                };
-                                actionsBar.appendChild(likeButton);
-                                actionsBar.appendChild(replyButton);
-                                commentWrapper.appendChild(nameDiv);
-                                commentWrapper.appendChild(contentDiv);
-                                commentWrapper.appendChild(actionsBar);
-                                var repliesDiv = document.createElement("div");
-                                repliesDiv.classList.add("replies");
-
-                                var timeDiv = document.createElement("div");
-                                timeDiv.classList.add("comment-time");
-                                timeDiv.textContent = timeString + " " + dateString
-                                // Cập nhật thời gian hiển thị mỗi phút
-                                setInterval(() => {
-                                    timeDiv.textContent = timeAgo(timestamp);
-                                }, 60000);
-                                actionsBar.appendChild(timeDiv);
-
-                                commentDiv.appendChild(avatarDiv);
-                                commentDiv.appendChild(commentWrapper);
-                                commentDiv.appendChild(repliesDiv);
-                                return commentDiv;
-                            }
-// Hàm xử lý like/unlike
-                            function toggleLike(commentId, likeButton) {
-                                if (!likedComments[commentId]) {
-                                    likedComments[commentId] = new Set();
-                                }
-                                var userLikes = likedComments[commentId];
-                                console.log(userLikes.size);
-                                if (userLikes.has(commentId)) {
-                                    // Nếu đã like => Unlike
-                                    userLikes.delete(commentId);
-                                } else {
-                                    // Nếu chưa like => Like
-                                    userLikes.add(commentId);
-                                }
-                                console.log(userLikes.size);
-                                let num = userLikes.size
-                                // Cập nhật số lượng like
-                                likeButton.textContent = `Like (` + num + `)`;
-                                likeButton.style.color = userLikes.has(commentId) ? '#007bff' : 'black';
-                            }
-
-// Hiển thị khung trả lời
-                            function showReplyBox(name, commentDiv) {
-                                var existingReplyBox = commentDiv.querySelector(".reply-box");
-                                if (existingReplyBox) {
-                                    existingReplyBox.remove();
-                                    return;
-                                }
-
-                                var replyBox = document.createElement("div");
-                                replyBox.classList.add("reply-box");
-                                var replyInput = document.createElement("input");
-                                replyInput.placeholder = "Reply...";
-                                var sendButton = document.createElement("button");
-                                sendButton.classList.add("send");
-                                sendButton.textContent = "Send";
-                                sendButton.onclick = function () {
-                                    if (replyInput.value.trim() !== "") {
-                                        var replyDiv = createCommentElement(name, replyInput.value.trim(), "reply_" + new Date().getTime());
-                                        commentDiv.querySelector(".replies").appendChild(replyDiv);
-                                        replyBox.remove();
-                                    } else {
-                                        showToast('Please enter reply!', '');
-                                    }
-                                };
-                                var cancelButton = document.createElement("button");
-                                cancelButton.classList.add("cancel");
-                                cancelButton.textContent = "Cancel";
-                                cancelButton.onclick = function () {
-                                    replyBox.remove();
-                                };
-                                replyBox.appendChild(replyInput);
-                                replyBox.appendChild(sendButton);
-                                replyBox.appendChild(cancelButton);
-                                commentDiv.appendChild(replyBox);
-                            }
-
-                        </script>
                         <!-- /tab2 -->
                     </div>
                     <!-- /product tab content -->
@@ -710,7 +402,7 @@
                 margin: 5px;
             }
         </style>
-
+        
         <!-- /row -->
     </div>
     <!-- /container -->
@@ -832,3 +524,4 @@
 </body>
 
 </html>
+

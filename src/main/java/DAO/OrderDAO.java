@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -139,31 +140,33 @@ public class OrderDAO extends DBContext {
 
     public ArrayList<Products> getProductByUserId(int userId) {
         ArrayList<Products> prod = new ArrayList<>();
-        String sql = "SELECT p.*, b.Brand_Name, o.Amount, o.status "
-                + "FROM Products p "
-                + "JOIN Brands b ON p.Brand_ID = b.Brand_ID "
-                + "JOIN Orders o ON o.Product_ID = p.Product_ID "
-                + "JOIN Customers c ON c.Customer_ID = o.Customer_ID "
-                + "WHERE c.Customer_ID = ?";
+        String sql = "SELECT p.*, b.Brand_Name, o.Quantity, os.status, cat.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON p.Brand_Id = b.Brand_ID\n"
+                + "JOIN Order_Details o ON o.Product_ID = p.Product_ID\n"
+                + "JOIN Orders os ON os.Order_Id = o.Order_Id\n"
+                + "JOIN Customers c ON c.Customer_ID = os.Customer_Id\n"
+                + "JOIN Categories cat ON p.Category_Id = cat.Category_Id\n"
+                + "WHERE c.Customer_ID = '?'";
         Object[] params = {userId};
 
         try ( ResultSet rs = execSelectQuery(sql, params)) {
             while (rs.next()) {
                 // Tách chuỗi hình ảnh
-                String[] image = rs.getString(5).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
+                String[] image = rs.getString(8).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
 
                 // Tạo đối tượng Products và thêm vào danh sách
                 Products p = new Products(
                         rs.getInt(1), // Cột ID
                         rs.getString(2), // Cột tên sản phẩm
-                        rs.getString(3), // Cột mô tả
-                        rs.getInt(4), // Cột số lượng
+                        rs.getInt(5), // Cột mô tả
+                        rs.getInt(6), // Cột số lượng
+                        rs.getDouble(7), // Cột giá
                         image[0], // Mảng hình ảnh từ cột hình ảnh
-                        rs.getDouble(6), // Cột giá
-                        rs.getInt(8), // Cột đã bán
                         rs.getString(9), // Cột tên thương hiệu
                         rs.getString(10),
-                        rs.getInt(11)
+                        rs.getInt(11),
+                        rs.getString(13)
                 );
 
                 // Thiết lập trạng thái (nếu cần)
@@ -180,7 +183,10 @@ public class OrderDAO extends DBContext {
     }
 
     public int removeOrder(int userId, int prodId) {
-        String sql = "delete from orders WHERE Customer_ID = ? and Product_ID = ?";
+        String sql = "DELETE o\n"
+                + "FROM Order_Details o\n"
+                + "JOIN Orders os ON os.Order_Id = o.Order_Id\n"
+                + "WHERE os.Customer_ID = ? AND o.Product_ID = ?";
         Object[] params = {userId, prodId};
         try {
             return execQuery(sql, params);
@@ -311,3 +317,4 @@ public class OrderDAO extends DBContext {
     }
 
 }
+

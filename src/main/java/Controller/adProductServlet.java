@@ -224,7 +224,9 @@ public class adProductServlet extends HttpServlet {
 
                 // If no new images were uploaded, keep the current images
                 String image = newImagesUploaded ? imagePaths.toString() : currentImages;
-            Products product = new Products(0, productName, countInStock, selled, price, imagePaths.toString(), description, type, brand);
+
+                Products product = new Products(0, productName, countInStock, selled, price, imagePaths.toString(), description, type, brand);
+
                 try {
                     pDAO.updateProduct(product);
                     request.setAttribute("types", pDAO.getAllType());
