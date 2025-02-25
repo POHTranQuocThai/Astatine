@@ -341,7 +341,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-}
+
     public int createGoogleUser(User user) throws SQLException {
         String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Avatar) "
                 + "VALUES ((SELECT COALESCE(MAX(Customer_ID), 0) + 1 FROM Customers), ?, ?, ?)";
@@ -349,7 +349,7 @@ public class UserDAO extends DBContext {
         Object[] params = {
            user.getFullname(),
            user.getEmail(),
-           user.getAvatar()
+           
         };
 
         try {
