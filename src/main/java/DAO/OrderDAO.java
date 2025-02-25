@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -33,46 +34,37 @@ public class OrderDAO extends DBContext {
             }
         }
 
-        String updateOrder = "UPDATE od\n"
-                + "SET od.Quantity = ?\n"
-                + "FROM Order_Details od\n"
-                + "JOIN Orders o ON od.Order_Id = o.Order_Id\n"
-                + "WHERE od.Product_Id = ? \n"
-                + "AND o.Customer_ID = ? \n"
-                + "AND o.status != 'Processing'";
+        String updateOrder = "UPDATE Order_Details SET Quantity = ? WHERE Product_Id = ? AND Order_Id = ?";
 
-        String insertOrder = "INSERT INTO Orders (Order_ID, Street, Ward, District, City, Country, Email, Phone,  Order_Date, Status, Customer_ID,  TotalPrice) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?, ?, ?)";
-        String insertOrderDetail = "INSERT INTO Order_Details (Product_ID, Order_Id,Quantity, Price) \n"
-                + "VALUES (?, ?, ?, ?);";
+        String insertOrder = "INSERT INTO Orders (Order_ID, Customer_Id, Email, Phone, Street, Ward, District, City, Country, Order_Date,TotalPrice,Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?, ?)";
 
+        String insertOrderDetail = "INSERT INTO Order_Details (Product_Id,Order_ID,Quantity,Price)"
+                + "VALUES (?, ?, ?, ?)";
         for (Order order : cDAO.getProductsInCart(customerId)) {
             // Cập nhật nếu sản phẩm đã tồn tại
             Products prod = pDAO.getProductById(order.getProductId());
 
-            Object[] updateParams = {order.getAmount(), order.getProductId(), customerId};
+            Object[] updateParams = {order.getAmount(), order.getProductId(), nextId};
             int updatedRows = execQuery(updateOrder, updateParams);
-
+            System.out.println("updatedRows " + updatedRows);
             if (updatedRows == 0) { // Nếu không có dòng nào được cập nhật, thêm mới sản phẩm
                 Object[] insertParams = {
-                    nextId++, // Order_ID, tăng nextId cho mỗi sản phẩm mới
-                    "", // Street
+                    nextId, // Order_ID, tăng nextId cho mỗi sản phẩm mới
+                    customerId,
+                    "", // Email
+                    "", // Phone
+                    "", // Strees
                     "", // Ward
                     "", // District
                     "", // City
                     "", // Country
-                    "", // Email
-                    "", // Phone
-                    //order.getAmount(), // Amount
+                    order.getTotalPrice(), // TotalPrice
                     "Pending", // Status
-                    customerId, // Customer_ID
-                    //order.getProductId(), // Product_ID
-                    order.getTotalPrice() // TotalPrice
-                        
                 };
                 Object[] insertParamsDetail = {
+                    nextId,
                     order.getProductId(),
-                    nextId++, // Order_ID, tăng nextId cho mỗi sản phẩm mới
                     order.getAmount(),
                     order.getAmount()*prod.getPrice()
                 };
@@ -325,3 +317,4 @@ public class OrderDAO extends DBContext {
     }
 
 }
+

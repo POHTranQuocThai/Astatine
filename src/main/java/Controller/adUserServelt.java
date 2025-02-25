@@ -24,7 +24,6 @@ import model.User;
  *
  * @author Ma Tan Loc - CE181795
  */
-
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
@@ -131,7 +130,7 @@ public class adUserServelt extends HttpServlet {
             String district = request.getParameter("district");
             String city = request.getParameter("city");
             String country = request.getParameter("country");
-            
+
             // Lấy đường dẫn của dự án và lưu vào trong img/product/
             String applicationPath = getServletContext().getRealPath("");
             String uploadPath = applicationPath.replace("build\\", "") + "assets\\img\\product";
@@ -157,7 +156,8 @@ public class adUserServelt extends HttpServlet {
                 }
             }
 
-            User user = new User(userId, fullname, street, ward, district, city, country, password, email, phone, isAdmin);
+            User user = new User(userId, fullname, email, password, phone, street, ward, district, city, country, isAdmin);
+
 
             try {
                 uDAO.updateUser(user);

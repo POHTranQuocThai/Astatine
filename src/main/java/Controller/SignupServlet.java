@@ -33,7 +33,7 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
     }
 
     /**
@@ -52,6 +52,9 @@ public class SignupServlet extends HttpServlet {
             String email = request.getParameter("email");
             String pass = request.getParameter("password");
             UserDAO uDAO = new UserDAO();
+            System.out.println("f"+fullname);
+            System.out.println("f"+email);
+            System.out.println("f"+pass);
 
             boolean existsFullname = uDAO.checkFullname(fullname);
             boolean existsEmail = uDAO.checkEmail(email);

@@ -1,3 +1,4 @@
+
 package model;
 import java.text.DecimalFormat;
 /**
@@ -133,10 +134,6 @@ public class Products {
     public void setStatus(String status) {
         this.status = status;
     }
-//    public String formatVietnameseCurrency(double number) {
-//    // Chuyển số thành chuỗi, thêm dấu chấm phân cách hàng nghìn, và thêm đơn vị VNĐ
-//    DecimalFormat formatter = new DecimalFormat("#,###");
-//        // Format số và thêm đơn vị "đ"
-//        return formatter.format(number) + " đ";
-//}
+
 }
+
