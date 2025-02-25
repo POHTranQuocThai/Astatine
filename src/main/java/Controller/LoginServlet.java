@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -62,7 +63,7 @@ public class LoginServlet extends HttpServlet {
                     User newUser = new User();
                     newUser.setFullname(googlePojo.getName());
                     newUser.setEmail(googlePojo.getEmail());
-                    newUser.setAvatar(googlePojo.getPicture());
+                   // newUser.setAvatar(googlePojo.getPicture());
 
                     System.out.println("User from DB: " + newUser);
 
@@ -72,7 +73,7 @@ public class LoginServlet extends HttpServlet {
 
                     session.setAttribute("User", user);
                     session.setAttribute("email", user.getEmail());
-                    session.setAttribute("avatar", user.getAvatar());
+                    //session.setAttribute("avatar", user.getAvatar());
                     response.sendRedirect("Home");
                 } catch (SQLException ex) {
                     Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,7 +81,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 session.setAttribute("User", user);
                 session.setAttribute("email", user.getEmail());
-                session.setAttribute("avatar", user.getAvatar());
+                //session.setAttribute("avatar", user.getAvatar());
                 response.sendRedirect("Home");
             }
         } else {
@@ -121,7 +122,7 @@ public class LoginServlet extends HttpServlet {
 
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
-                session.setAttribute("avatar", user.getAvatar());
+                //session.setAttribute("avatar", user.getAvatar());
                 // Giữ lại giỏ hàng cũ nếu có
                 CartDAO sessionCart = (CartDAO) session.getAttribute("SHOP");
                 OrderDAO oDAO = new OrderDAO();
