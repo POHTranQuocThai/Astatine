@@ -123,6 +123,7 @@ public class LoginServlet extends HttpServlet {
                 if (sessionCart != null) {
                     for (Products p : oDAO.getProductByUserId(user.getUserId())) {
                         if ("Pending".equals(p.getStatus())) {
+                            p.setCountInStock(p.getCountInStock() - p.getQuanOrder());
                             Cart c = new Cart(p, p.getQuanOrder());
                             sessionCart.addToCart(c);
                         }
