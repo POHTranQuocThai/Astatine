@@ -37,7 +37,7 @@ body {
 
 .form-box {
     position: absolute;
-    right: 0;
+    right: 50%;
     width: 50%;
     height: 100%;
     background: #fff;
@@ -178,7 +178,7 @@ form {
 .toggle-box::before {
     content: '';
     position: absolute;
-    left: 0;
+    left: 50%;
     width: 50%;
     height: 100%;
     background: #21A691;
@@ -196,6 +196,25 @@ form {
     justify-content: center;
     align-items: center;
     z-index: 2;
+}
+
+.toggle-panel.toggle-left {
+    left: 0;
+    transition-delay: 1.2s;
+}
+
+.container.active .toggle-panel.toggle-left {
+    left: -50%;
+    transition-delay: .6s;
+}
+
+.toggle-panel.toggle-right {
+    right: 0;
+}
+
+.container.active .toggle-panel.toggle-right {
+    right: 0;
+    transition-delay: 1.2s;
 }
 
 .toggle-panel p {

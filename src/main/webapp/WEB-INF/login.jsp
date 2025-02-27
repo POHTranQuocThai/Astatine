@@ -1,4 +1,4 @@
-    <%-- 
+<%-- 
     Document   : login
     Created on : Oct 14, 2024, 8:13:40 PM
     Author     : Tran Quoc Thai - CE181618 
@@ -31,19 +31,43 @@
     <body>
         <div class="container">
             <div class="form-box login">
-                <form action="Login" method="POST" class="form" id="form-login">
+                <form action="Login" method="post" class="form" id="form-login">
+                    <input type="hidden" name="action" value="login">
                     <h1>Login</h1>
-                    <div class="form-group input-box">
-                        <input type="text" placeholder="Email" id="email" name="email" class="form-control" value="${email != null ? email : ""}"/>
-                        <i class='bx bxs-envelope'></i>
-                        <span class="form-message"></span>
+                    <div class="field email-field">
+                        <div class="input-box">
+                            <input type="email" placeholder="Email" id="email" name="email" class="email" value="${email != null ? email:""}"/>
+                            <i class='bx bxs-envelope'></i>
+                        </div>
+                        <span class="error email-error">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">Please enter a valid email</p>
+                        </span>
                     </div>
-                    <div class="form-group input-box">
-                        <input type="password" placeholder="Password" id="password" name="password" class="form-control"/>
-                        <i class="bx bxs-lock-alt"></i>
+
+                    <div class="field password-field">
+                        <div class="input-box">
+                            <input type="password" placeholder="Password" id="password" name="password" class="password">
+                            <i class="bx bxs-lock-alt"></i>
+                            <i class="bx bxs-hide show-hide"></i>
+                        </div>
+
+                        <span class="error password-error">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">
+                                ${mess != null ? mess : "Please enter password"}
+                            </p>
+                        </span>
+
+                        <span class="error password-error" style="display: ${mess != null ? 'flex' : 'none'};">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">
+                                ${mess != null ? mess : "Please enter password"}
+                            </p>
+                        </span>
+
                     </div>
                     <div class="forgot-link">
-                        <span class="form-message">${mess != null ? mess : ""}</span>
                         <a href="#">Forgot password?</a>
                     </div>
                     <button type="submit" class="btn">Login</button>
@@ -57,138 +81,17 @@
                 </form>
             </div>
 
-            <div class="form-box register">
-                <form  class="form" id="form-signup">
-                    <h1>Register</h1>
-                    <div class="form-group input-box">
-                        <input type="text" placeholder="Full Name" id="fullname" name="fullname" class="form-control">
-                        <i class='bx bxs-user'></i>
-                        <span class="form-message">${existsFullname != null ? existsFullname : ""}</span>
-                    </div>
-                    <div class="form-group input-box">
-                        <input type="text" placeholder="Email" id="email" name="email" class="form-control">
-                        <i class='bx bxs-envelope'></i>
-                        <span class="form-message">${existsEmail != null ? existsEmail : ""}</span>
-                    </div>
-                    <div class="form-group input-box">
-                        <input type="password" placeholder="Password" id="password" name="password" class="form-control">
-                        <i class="bx bxs-lock-alt"></i>
-                        <span class="form-message"></span>
-                    </div>
-                    <div class="form-group input-box">
-                        <input type="password" placeholder="Confirm Password" id="password_confirmation" name="password_confirmation" class="form-control">
-                        <i class="bx bxs-lock-alt"></i>
-                        <span class="form-message"></span>
-                    </div>
-                    <button type="submit" class="btn">Register</button>
-                </form>
-            </div>
             <div class="toggle-box">
                 <div class="toggle-panel toggle-left">
                     <h1>Hello, Welcome!</h1>
                     <p>Don't have an account?</p>
-                    <button class="btn register-btn">Register</button>
-                </div>
-
-                <div class="toggle-panel toggle-right">
-                    <h1>Welcome Back!</h1>
-                    <p>Already have an account?</p>
-                    <button class="btn login-btn">Login</button>
+                    <a class="btn register-btn" href="Signup">Register</a>
                 </div>
             </div>
         </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var alertMessage = document.querySelector(".form-message.alert");
-
-                if (!alertMessage.textContent.trim()) {
-                    alertMessage.style.display = "none";
-                } else {
-                    alertMessage.style.display = "block";
-                }
-            });
-
-            Validator({
-                form: '#form-login',
-                formGroupSelector: '.form-group',
-                errorSelector: '.form-message',
-                rules: [
-                    Validator.isEmail('#email'),
-                    Validator.isRequired('#password')
-
-                ],
-                onsubmit: (data) => {
-                    let email = document.getElementById('email').value;
-                    let password = document.getElementById('password').value;
-
-                    let formData = new FormData();
-                    formData.append('email', email);
-                    formData.append('password', password);
-
-                    // Gửi dữ liệu đến  bằng fetch
-                    fetch('LoginServlet', {
-                        method: 'POST',
-                        body: formData
-                    })
-                            .then(response => response.text())
-                            .then(data => {
-                                console.log(data);
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                }
-            });
-
-            Validator({
-                form: '#form-signup',
-                formGroupSelector: '.form-group',
-                errorSelector: '.form-message',
-                rules: [
-                    Validator.isRequired('#fullname', 'Vui lòng nhập tên đầy đủ của bạn'),
-                    Validator.minLength('#password', 6),
-                    Validator.isRequired('#password_confirmation'),
-                    Validator.isEmail('#email'),
-                    Validator.isConfirmed('#password_confirmation', () => {
-                        return document.querySelector('#form-signup #password').value;
-                    }, 'Mật khẩu nhập lại không chính xác'),
-                ],
-                onsubmit: (data) => {
-                    // Lấy dữ liệu từ các input
-                    let fullname = document.getElementById('#form-signup #fullname').value;
-                    let email = document.getElementById('#form-signup #email').value;
-                    let password = document.getElementById('#form-signup #password').value;
-
-                    // Tạo FormData để gửi dữ liệu tới Servlet
-                    let formData = new FormData();
-                    formData.append('fullname', fullname);
-                    formData.append('email', email);
-                    formData.append('password', password);
-
-                    // Gửi dữ liệu đến Servlet bằng fetch
-                    fetch('SignupServlet', {
-                        method: 'POST',
-                        body: formData
-                    })
-                            .then(response => response.text())
-                            .then(data => {
-                                // Xử lý phản hồi từ server
-                                console.log(data);
-                                if (data.includes("success")) {
-                                    alert("Đăng ký thành công!");
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                }
-            });
-        </script>
-
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-        <script src="assets/js/Validator/validator.js"></script>
-        <script src="assets/js/JSRemake/login.js"></script>
+        <script src="assets/js/Validator/validLogin.js"></script>
     </body>
 </html>

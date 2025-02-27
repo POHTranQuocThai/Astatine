@@ -13,7 +13,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--        <link rel="stylesheet" href="assets/css/login.css"/>-->
+        <link rel="stylesheet" href="assets/css/signup.css"/>
+
         <title>Astatine 04 | Welcome Back!</title>
         <link rel="shortcut icon" type="image/png" href="assets/img/Tittle-web-icon/Logo_Dark.ico" />
 
@@ -31,12 +32,16 @@
     <body>
         <div class="container">
             <div class="form-box register">
-                <form id="form-signup">
+
+                <form action="Signup" method="post" class="form" id="form-signup">
+
                     <input type="hidden" name="action" value="signup">
                     <h1>Register</h1>
                     <div class="field fullname-field">
                         <div class="input-box">
-                            <input type="text" placeholder="Full Name" id="fullname" name="fullname" class="fullname">
+
+                            <input type="text" placeholder="Full Name" id="fullname" name="fullname" class="fullname" value="${fullname != null ? fullname : ''}">
+
                             <i class='bx bxs-user'></i>
                         </div>
                         <span class="error email-error">
@@ -47,13 +52,20 @@
 
                     <div class="field email-field">
                         <div class="input-box">
-                            <input type="email" placeholder="Email" id="email" name="email" class="email"/>
+
+                            <input type="email" placeholder="Email" id="email" name="email" class="email" value="${email != null ? email : ''}"/>
+
                             <i class='bx bxs-envelope'></i>
                         </div>
                         <span class="error email-error">
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">${existsEmail != null ? existsEmail : "Please enter a valid email"}</p>
                         </span>
+                        <span class="error email-exist" style="display: ${existsEmail != null ? 'flex' : 'none'};">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">${existsEmail != null ? existsEmail : "Please enter a valid email"}</p>
+                        </span>
+
                     </div>
                     <div class="field password-field">
                         <div class="input-box">
@@ -61,6 +73,7 @@
                             <i class="bx bxs-lock-alt"></i>
                             <i class="bx bxs-hide show-hide"></i>
                         </div>
+
                         <span class="error password-error">
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">
@@ -74,6 +87,7 @@
                             <i class="bx bxs-lock-alt"></i>
                             <i class="bx bxs-hide show-hide"></i>
                         </div>
+
                         <span class="error cPassword-error">
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">
@@ -86,96 +100,17 @@
                 </form>
             </div>
             <div class="toggle-box">
-                <div class="toggle-panel toggle-left">
-                    <h1>Hello, Welcome!</h1>
-                    <p>Don't have an account?</p>
-                    <button class="btn register-btn">Register</button>
-                </div>
-
                 <div class="toggle-panel toggle-right">
                     <h1>Welcome Back!</h1>
                     <p>Already have an account?</p>
-                    <button class="btn login-btn">Login</button>
+                    <a class="btn login-btn" href="Login">Login</a>
                 </div>
             </div>
         </div>
-        <script>
-            const signupForm = document.querySelector("#form-signup"),
-                    signupFullnameField = signupForm.querySelector(".fullname-field"),
-                    signupFullnameInput = signupFullnameField.querySelector(".fullname"),
-                    signupEmailField = signupForm.querySelector(".email-field"),
-                    signupEmailInput = signupEmailField.querySelector(".email"),
-                    signupPassField = signupForm.querySelector(".password-field"),
-                    signupPassInput = signupPassField.querySelector(".password"),
-                    signupCPassField = signupForm.querySelector(".cpassword-field"),
-                    signupCPassInput = signupCPassField.querySelector(".cPassword");
 
-            function checkFullnameSignup() {
-                if (signupFullnameInput.value === "") {
-                    return signupFullnameField.classList.add("invalid");
-                }
-                signupFullnameField.classList.remove("invalid");
-            }
-
-            function checkEmailSignup() {
-                const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-                if (!signupEmailInput.value.match(emailPattern)) {
-                    return signupEmailField.classList.add("invalid");
-                }
-                signupEmailField.classList.remove("invalid");
-            }
-
-            function createPassSignup() {
-                if (signupPassInput.value.length < 6) {
-                    return signupPassField.classList.add("invalid");
-                }
-                signupPassField.classList.remove("invalid");
-            }
-
-            function confirmPassSignup() {
-                if (signupPassInput.value !== signupCPassInput.value || signupCPassInput.value === "") {
-                    return signupCPassField.classList.add("invalid");
-                }
-                signupCPassField.classList.remove("invalid");
-            }
-
-            signupForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                checkFullnameSignup();
-                checkEmailSignup();
-                createPassSignup();
-                confirmPassSignup();
-                signupFullnameInput.addEventListener("input", checkFullnameSignup);
-                signupEmailInput.addEventListener("keyup", checkEmailSignup);
-                signupPassInput.addEventListener("input", createPassSignup);
-                signupCPassInput.addEventListener("input", confirmPassSignup);
-
-                // Nếu tất cả đều hợp lệ thì submit
-                if (
-                        !signupFullnameField.classList.contains("invalid") &&
-                        !signupEmailField.classList.contains("invalid") &&
-                        !signupPassField.classList.contains("invalid") &&
-                        !signupCPassField.classList.contains("invalid")
-                        ) {
-                    let formData = new FormData(signupForm);
-
-                    fetch("Signup", {
-                        method: "POST",
-                        body: formData
-                    })
-                            .then(response => response.text())
-                            .then(data => {
-                                console.log(data); // In ra console để kiểm tra phản hồi từ servlet
-                            })
-                            .catch(error => console.error("Lỗi:", error));
-                }
-            });
-
-        </script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-        <!--        <script src="assets/js/Validator/validLogin.js"></script>-->
         <script src="assets/js/Validator/validSignup.js"></script>
-        <!--        <script src="assets/js/JSRemake/login.js"></script>-->
+
     </body>
 </html>
