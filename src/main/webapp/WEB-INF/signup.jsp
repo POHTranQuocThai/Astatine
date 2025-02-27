@@ -13,7 +13,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="assets/css/login.css"/>
+        <link rel="stylesheet" href="assets/css/signup.css"/>
         <title>Astatine 04 | Welcome Back!</title>
         <link rel="shortcut icon" type="image/png" href="assets/img/Tittle-web-icon/Logo_Dark.ico" />
 
@@ -30,21 +30,35 @@
 
     <body>
         <div class="container">
-            <div class="form-box login">
-                <form action="Login" method="post" class="form" id="form-login">
-                    <input type="hidden" name="action" value="login">
-                    <h1>Login</h1>
+            <div class="form-box register">
+                <form action="Signup" method="post" class="form" id="form-signup">
+                    <input type="hidden" name="action" value="signup">
+                    <h1>Register</h1>
+                    <div class="field fullname-field">
+                        <div class="input-box">
+                            <input type="text" placeholder="Full Name" id="fullname" name="fullname" class="fullname" value="${fullname != null ? fullname : ''}">
+                            <i class='bx bxs-user'></i>
+                        </div>
+                        <span class="error email-error">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">Please enter a valid name </p>
+                        </span>
+                    </div>
+
                     <div class="field email-field">
                         <div class="input-box">
-                            <input type="email" placeholder="Email" id="email" name="email" class="email" value="${email != null ? email:""}"/>
+                            <input type="email" placeholder="Email" id="email" name="email" class="email" value="${email != null ? email : ''}"/>
                             <i class='bx bxs-envelope'></i>
                         </div>
                         <span class="error email-error">
                             <i class="bx bx-error-circle error-icon"></i>
-                            <p class="error-text">Please enter a valid email</p>
+                            <p class="error-text">${existsEmail != null ? existsEmail : "Please enter a valid email"}</p>
+                        </span>
+                        <span class="error email-exist" style="display: ${existsEmail != null ? 'flex' : 'none'};">
+                            <i class="bx bx-error-circle error-icon"></i>
+                            <p class="error-text">${existsEmail != null ? existsEmail : "Please enter a valid email"}</p>
                         </span>
                     </div>
-
                     <div class="field password-field">
                         <div class="input-box">
                             <input type="password" placeholder="Password" id="password" name="password" class="password">
@@ -55,43 +69,39 @@
                         <span class="error password-error">
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">
-                                ${mess != null ? mess : "Please enter password"}
+                                Please enter at least 6 character.
                             </p>
                         </span>
+                    </div>
+                    <div class="field cpassword-field">
+                        <div class="input-box">
+                            <input type="password" placeholder="Confirm Password" id="password_confirmation" name="password_confirmation" class="cPassword">
+                            <i class="bx bxs-lock-alt"></i>
+                            <i class="bx bxs-hide show-hide"></i>
+                        </div>
 
-                        <span class="error password-error" style="display: ${mess != null ? 'flex' : 'none'};">
+                        <span class="error cPassword-error">
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">
-                                ${mess != null ? mess : "Please enter password"}
+                                Password don't match.
                             </p>
                         </span>
+                    </div>
 
-                    </div>
-                    <div class="forgot-link">
-                        <a href="#">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
-                    <p>or login with social platforms</p>
-                    <div class="social-icons">
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Astatine/Login&response_type=code&client_id=713665687871-pqhbevvfk0h2vv7rnuu0id61qptou58f.apps.googleusercontent.com&approval_prompt=force">
-                            <i class="bx bxl-google"></i>
-                        </a>
-                        <a href="#"><i class='bx bxl-facebook'></i></a>
-                    </div>
+                    <button type="submit" class="btn">Register</button>
                 </form>
             </div>
-
             <div class="toggle-box">
-                <div class="toggle-panel toggle-left">
-                    <h1>Hello, Welcome!</h1>
-                    <p>Don't have an account?</p>
-                    <a class="btn register-btn" href="Signup">Register</a>
+                <div class="toggle-panel toggle-right">
+                    <h1>Welcome Back!</h1>
+                    <p>Already have an account?</p>
+                    <a class="btn login-btn" href="Login">Login</a>
                 </div>
             </div>
         </div>
 
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-        <script src="assets/js/Validator/validLogin.js"></script>
+        <script src="assets/js/Validator/validSignup.js"></script>
     </body>
 </html>

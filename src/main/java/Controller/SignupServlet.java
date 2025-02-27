@@ -1,9 +1,10 @@
-package Controller;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+package Controller;
+
 import DAO.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,7 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
     }
 
     /**
@@ -53,19 +54,13 @@ public class SignupServlet extends HttpServlet {
             String pass = request.getParameter("password");
             UserDAO uDAO = new UserDAO();
 
-            boolean existsFullname = uDAO.checkFullname(fullname);
             boolean existsEmail = uDAO.checkEmail(email);
 
-            if (existsFullname || existsEmail) {
-                if (existsFullname) {
-                    request.setAttribute("existsFullname", "The name already exists!");
-                    request.setAttribute("fullname", fullname);
-                }
-                if (existsEmail) {
-                    request.setAttribute("existsEmail", "The email already exists!!");
-                    request.setAttribute("email", email);
-                }
-                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+            if (existsEmail) {
+                request.setAttribute("existsEmail", "The email already exists!!");
+                request.setAttribute("fullname", fullname);
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
                 return;
             }
 
@@ -76,7 +71,7 @@ public class SignupServlet extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMes", "Sign Up failed!");
-                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
             }
         } catch (SQLException | NoSuchAlgorithmException ex) {
             Logger.getLogger(SignupServlet.class.getName()).log(Level.SEVERE, null, ex);

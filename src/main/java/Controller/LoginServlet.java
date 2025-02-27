@@ -5,9 +5,7 @@
  */
 package Controller;
 
-import DAO.CartDAO;
-import DAO.GoogleLogin;
-import DAO.OrderDAO;
+import model.GoogleAccount;
 import DAO.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -20,31 +18,20 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Cart;
-import model.GoogleAccount;
-import model.Products;
 import model.User;
+import DAO.GoogleLogin;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  *
  * @author Tran Quoc Thai - CE181618
  */
+@WebServlet(name = "LoginServlet", urlPatterns = {"/Login"})
 public class LoginServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-
         String code = request.getParameter("code");
         if (code != null && !code.isEmpty()) {
             String accessToken = GoogleLogin.getToken(code);
@@ -63,7 +50,7 @@ public class LoginServlet extends HttpServlet {
                     User newUser = new User();
                     newUser.setFullname(googlePojo.getName());
                     newUser.setEmail(googlePojo.getEmail());
-                   // newUser.setAvatar(googlePojo.getPicture());
+                    //newUser.setAvatar(googlePojo.getPicture());
 
                     System.out.println("User from DB: " + newUser);
 
@@ -85,7 +72,24 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("Home");
             }
         } else {
-            request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+            String action = request.getParameter("action");
+            response.setContentType("text/html;charset=UTF-8");
+
+            if (action != null) {
+                switch (action) {
+                    case "login":
+                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+                        break;
+                    case "signup":
+                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+                        break;
+                    default:
+                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+                        break;
+                }
+            } else {
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+            }
         }
     }
 
@@ -100,40 +104,30 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+
+        UserDAO uDAO = new UserDAO();
+
+        String email = request.getParameter("email");
+        String pass = request.getParameter("password");
 
         try {
-            String email = request.getParameter("email");
-            String pass = request.getParameter("password");
-
-            UserDAO uDAO = new UserDAO();
-
             // Kiểm tra đăng nhập qua UserDAO
             if (!uDAO.login(email, uDAO.getHashPass(pass))) {
                 // Nếu đăng nhập thất bại, trả về trang đăng nhập với thông báo lỗi
                 request.setAttribute("mess", "Email or password invalid!");
                 request.setAttribute("email", email);
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
                 // Nếu đăng nhập thành công, lưu thông tin người dùng vào session
             } else {
                 User user = new User(uDAO.getUserId(email), pass, email);
                 user.setIsAdmin(uDAO.checkIsAdmin(email));
                 HttpSession session = request.getSession();
                 user = uDAO.getUserByEmail(email);
-
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
                 //session.setAttribute("avatar", user.getAvatar());
-                // Giữ lại giỏ hàng cũ nếu có
-                CartDAO sessionCart = (CartDAO) session.getAttribute("SHOP");
-                OrderDAO oDAO = new OrderDAO();
-                if (sessionCart != null) {
-                    for (Products p : oDAO.getProductByUserId(user.getUserId())) {
-                        if ("Pending".equals(p.getStatus())) {
-                            Cart c = new Cart(p, p.getQuanOrder());
-                            sessionCart.addToCart(c);
-                        }
-                    }
-                }
+
                 // Tạo cookie cho tên người dùng (không lưu mật khẩu)
                 Cookie u = new Cookie("user", email);
                 u.setMaxAge(60);  // Cookie tồn tại trong 60 giây
@@ -141,10 +135,9 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("isAdmin", user.isIsAdmin());
                 // Chuyển hướng người dùng đến trang chính
                 response.sendRedirect("Home");  // Dùng sendRedirect thay vì forward
+
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException | SQLException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
