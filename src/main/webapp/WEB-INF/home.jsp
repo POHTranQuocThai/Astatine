@@ -346,7 +346,7 @@
                                                         </div>                      
                                                     </div>                                                      
                                                 </c:forEach>    
-                                                
+
                                             </div>
                                             <div id="slick-nav-1" class="products-slick-nav"></div>
                                         </div>
@@ -533,7 +533,7 @@
                                             <div class="products-slick" data-nav="#slick-nav-2">  
                                                 <!-- product -->                      
                                                 <c:forEach items="${topSelled}" var="top">
-                                                    <div class="product">
+                                                    <div class="product" style="opacity: ${top.countInStock > 0 ? '1': '.5'}">
                                                         <div class="product-img">
                                                             <img src="${top.image}" alt="">
                                                             <div class="product-label">
@@ -563,10 +563,12 @@
                                                             </div>
                                                         </div>
                                                         <div class="add-to-cart">
-                                                            <button onclick="handleAddToCart(${top.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add
-                                                                to
-                                                                cart</button>
-                                                        </div>
+                                                            <button class="add-to-cart-btn" 
+                                                                    style="pointer-events: ${top.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${top.productId}, '${email}')" >
+                                                                <i class="fa fa-shopping-cart"></i> ${top.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                            </button>                            
+                                                        </div>   
                                                     </div>
                                                 </c:forEach>    
                                                 <!-- /product -->

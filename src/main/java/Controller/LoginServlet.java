@@ -50,7 +50,6 @@ public class LoginServlet extends HttpServlet {
                     User newUser = new User();
                     newUser.setFullname(googlePojo.getName());
                     newUser.setEmail(googlePojo.getEmail());
-                    //newUser.setAvatar(googlePojo.getPicture());
 
                     System.out.println("User from DB: " + newUser);
 
@@ -60,7 +59,7 @@ public class LoginServlet extends HttpServlet {
 
                     session.setAttribute("User", user);
                     session.setAttribute("email", user.getEmail());
-                    //session.setAttribute("avatar", user.getAvatar());
+
                     response.sendRedirect("Home");
                 } catch (SQLException ex) {
                     Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -68,7 +67,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 session.setAttribute("User", user);
                 session.setAttribute("email", user.getEmail());
-                //session.setAttribute("avatar", user.getAvatar());
+
                 response.sendRedirect("Home");
             }
         } else {
@@ -126,8 +125,20 @@ public class LoginServlet extends HttpServlet {
                 user = uDAO.getUserByEmail(email);
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
-                //session.setAttribute("avatar", user.getAvatar());
 
+
+                // Giữ lại giỏ hàng cũ nếu có
+                CartDAO sessionCart = (CartDAO) session.getAttribute("SHOP");
+                OrderDAO oDAO = new OrderDAO();
+                if (sessionCart != null) {
+                    for (Products p : oDAO.getProductByUserId(user.getUserId())) {
+                        if ("Pending".equals(p.getStatus())) {
+                            p.setCountInStock(p.getCountInStock() - p.getQuanOrder());
+                            Cart c = new Cart(p, p.getQuanOrder());
+                            sessionCart.addToCart(c);
+                        }
+                    }
+                }
                 // Tạo cookie cho tên người dùng (không lưu mật khẩu)
                 Cookie u = new Cookie("user", email);
                 u.setMaxAge(60);  // Cookie tồn tại trong 60 giây

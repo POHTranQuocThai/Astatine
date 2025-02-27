@@ -53,6 +53,9 @@ public class SignupServlet extends HttpServlet {
             String email = request.getParameter("email");
             String pass = request.getParameter("password");
             UserDAO uDAO = new UserDAO();
+            System.out.println("f"+fullname);
+            System.out.println("f"+email);
+            System.out.println("f"+pass);
 
             boolean existsEmail = uDAO.checkEmail(email);
 

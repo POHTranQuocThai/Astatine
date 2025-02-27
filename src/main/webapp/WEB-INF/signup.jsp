@@ -14,6 +14,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="assets/css/signup.css"/>
+
         <title>Astatine 04 | Welcome Back!</title>
         <link rel="shortcut icon" type="image/png" href="assets/img/Tittle-web-icon/Logo_Dark.ico" />
 
@@ -31,12 +32,16 @@
     <body>
         <div class="container">
             <div class="form-box register">
+
                 <form action="Signup" method="post" class="form" id="form-signup">
+
                     <input type="hidden" name="action" value="signup">
                     <h1>Register</h1>
                     <div class="field fullname-field">
                         <div class="input-box">
+
                             <input type="text" placeholder="Full Name" id="fullname" name="fullname" class="fullname" value="${fullname != null ? fullname : ''}">
+
                             <i class='bx bxs-user'></i>
                         </div>
                         <span class="error email-error">
@@ -47,7 +52,9 @@
 
                     <div class="field email-field">
                         <div class="input-box">
+
                             <input type="email" placeholder="Email" id="email" name="email" class="email" value="${email != null ? email : ''}"/>
+
                             <i class='bx bxs-envelope'></i>
                         </div>
                         <span class="error email-error">
@@ -58,6 +65,7 @@
                             <i class="bx bx-error-circle error-icon"></i>
                             <p class="error-text">${existsEmail != null ? existsEmail : "Please enter a valid email"}</p>
                         </span>
+
                     </div>
                     <div class="field password-field">
                         <div class="input-box">
@@ -103,5 +111,6 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script src="assets/js/Validator/validSignup.js"></script>
+
     </body>
 </html>

@@ -42,12 +42,12 @@ const handlePaid = (total) => {
             imgQr.style.display = "block";
             orderSubmit.style.pointerEvents = 'none';
 
-            // Nếu đã có interval trước đó, xóa đi để tránh trùng lặp
+            // Xóa interval cũ nếu tồn tại để tránh trùng lặp
             if (intervalId) {
                 clearInterval(intervalId);
             }
 
-            // Chờ 10 giây sau đó kiểm tra giao dịch mỗi 1 giây
+            // Chờ 10 giây, sau đó kiểm tra giao dịch mỗi 1 giây
             setTimeout(() => {
                 intervalId = setInterval(() => {
                     checkPaid(amount, desc, total);
@@ -58,6 +58,13 @@ const handlePaid = (total) => {
             paidMessage.style.color = 'red';
             paidMessage.style.textAlign = 'center';
         } else {
+            // Dừng kiểm tra API nếu không chọn payment-2
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null; // Đặt lại intervalId để tránh chạy lại
+            }
+            isSuccess = false; // Reset trạng thái để có thể chạy lại nếu chọn payment-2 sau đó
+
             imgQr.src = "";
             imgQr.style.display = "none";
             orderSubmit.style.pointerEvents = 'auto';
@@ -94,8 +101,8 @@ const checkPaid = async (price, content, total) => {
             console.warn("API bị giới hạn, đợi 30 giây trước khi thử lại...");
             clearInterval(intervalId); // Dừng kiểm tra để tránh spam API
             setTimeout(() => {
-                intervalId = setInterval(() => checkPaid(price, content, total), 30000); // Kiểm tra lại sau 30 giây
-            }, 30000);
+                intervalId = setInterval(() => checkPaid(price, content, total), 1000); // Kiểm tra lại sau 30 giây
+            }, 10000);
             return;
         }
 
@@ -114,8 +121,6 @@ const checkPaid = async (price, content, total) => {
                 console.log("Thanh toán thành công!");
                 window.location.href = `Orders?total=${total}`;
                 isSuccess = true;
-
-
             }
         }
     } catch (e) {
