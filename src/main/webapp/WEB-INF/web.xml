@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-  
-
     <servlet>
         <servlet-name>SignupServlet</servlet-name>
         <servlet-class>Controller.SignupServlet</servlet-class>
@@ -85,6 +83,14 @@
     <servlet>
         <servlet-name>Chat</servlet-name>
         <servlet-class>Controller.ChatServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>requestPasswordServlet</servlet-name>
+        <servlet-class>Controller.requestPasswordServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>resetPasswordServlet</servlet-name>
+        <servlet-class>Controller.resetPasswordServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>adListServlet</servlet-name>
@@ -172,6 +178,14 @@
     <servlet-mapping>
         <servlet-name>Chat</servlet-name>
         <url-pattern>/Chat</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>requestPasswordServlet</servlet-name>
+        <url-pattern>/requestPassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>resetPasswordServlet</servlet-name>
+        <url-pattern>/resetPassword</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

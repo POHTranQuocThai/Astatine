@@ -50,6 +50,7 @@ public class LoginServlet extends HttpServlet {
                     User newUser = new User();
                     newUser.setFullname(googlePojo.getName());
                     newUser.setEmail(googlePojo.getEmail());
+                    newUser.setPassword("");
 
                     System.out.println("User from DB: " + newUser);
 
@@ -75,17 +76,8 @@ public class LoginServlet extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
 
             if (action != null) {
-                switch (action) {
-                    case "login":
-                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
-                        break;
-                    case "signup":
-                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
-                        break;
-                    default:
-                        request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
-                        break;
-                }
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
+
             } else {
                 request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
             }
@@ -111,13 +103,10 @@ public class LoginServlet extends HttpServlet {
         String pass = request.getParameter("password");
 
         try {
-            // Kiểm tra đăng nhập qua UserDAO
             if (!uDAO.login(email, uDAO.getHashPass(pass))) {
-                // Nếu đăng nhập thất bại, trả về trang đăng nhập với thông báo lỗi
                 request.setAttribute("mess", "Email or password invalid!");
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
-                // Nếu đăng nhập thành công, lưu thông tin người dùng vào session
             } else {
                 User user = new User(uDAO.getUserId(email), pass, email);
                 user.setIsAdmin(uDAO.checkIsAdmin(email));
@@ -126,26 +115,11 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
 
-
-                // Giữ lại giỏ hàng cũ nếu có
-                CartDAO sessionCart = (CartDAO) session.getAttribute("SHOP");
-                OrderDAO oDAO = new OrderDAO();
-                if (sessionCart != null) {
-                    for (Products p : oDAO.getProductByUserId(user.getUserId())) {
-                        if ("Pending".equals(p.getStatus())) {
-                            p.setCountInStock(p.getCountInStock() - p.getQuanOrder());
-                            Cart c = new Cart(p, p.getQuanOrder());
-                            sessionCart.addToCart(c);
-                        }
-                    }
-                }
-                // Tạo cookie cho tên người dùng (không lưu mật khẩu)
                 Cookie u = new Cookie("user", email);
-                u.setMaxAge(60);  // Cookie tồn tại trong 60 giây
+                u.setMaxAge(60);
                 response.addCookie(u);
                 session.setAttribute("isAdmin", user.isIsAdmin());
-                // Chuyển hướng người dùng đến trang chính
-                response.sendRedirect("Home");  // Dùng sendRedirect thay vì forward
+                response.sendRedirect("Home");
 
             }
         } catch (NoSuchAlgorithmException | SQLException ex) {

@@ -8,6 +8,7 @@
     border-radius: 50%;
     background-color: #21A691;
     text-align: center;
+    align-content: center;
     padding: 5px;
     cursor: pointer;
     z-index: 9999999999999999;
@@ -46,8 +47,8 @@
 }
 
 #chatIcon img{
-    width: 80%;
-    height: 80%;
+    width: 75%;
+    height: 75%;
 }
 #chat-header {
     padding: 13px;
