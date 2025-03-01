@@ -68,12 +68,12 @@
 
                     </div>
                     <div class="forgot-link">
-                        <a href="#">Forgot password?</a>
+                        <a href="requestPassword">Forgot password?</a>
                     </div>
                     <button type="submit" class="btn">Login</button>
                     <p>or login with social platforms</p>
                     <div class="social-icons">
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Astatine/Login&response_type=code&client_id=713665687871-pqhbevvfk0h2vv7rnuu0id61qptou58f.apps.googleusercontent.com&approval_prompt=force">
+                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Login&response_type=code&client_id=713665687871-pqhbevvfk0h2vv7rnuu0id61qptou58f.apps.googleusercontent.com&approval_prompt=force">
                             <i class="bx bxl-google"></i>
                         </a>
                         <a href="#"><i class='bx bxl-facebook'></i></a>

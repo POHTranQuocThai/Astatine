@@ -153,17 +153,18 @@ public class UserDAO extends DBContext {
         Object[] params = {userId};
         try ( ResultSet rs = execSelectQuery(sql, params)) {
             if (rs.next()) {
-                return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),  rs.getBoolean(11));
+                return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getBoolean(11));
             }
         } catch (Exception e) {
         }
         return null;
     }
+
     public boolean checkInfoUser(User user) {
-        if((user.getStreet().isEmpty() || user.getStreet()==null) || (user.getWard().isEmpty()||user.getWard()==null) || (user.getCity() == null || user.getCity().isEmpty()) || (user.getDistrict() == null || user.getDistrict().isEmpty())
-                || (user.getCountry() == null || user.getCountry().isEmpty()) || (user.getPhone() == null || user.getPhone().isEmpty())){
-        return false;
-    }
+        if ((user.getStreet().isEmpty() || user.getStreet() == null) || (user.getWard().isEmpty() || user.getWard() == null) || (user.getCity() == null || user.getCity().isEmpty()) || (user.getDistrict() == null || user.getDistrict().isEmpty())
+                || (user.getCountry() == null || user.getCountry().isEmpty()) || (user.getPhone() == null || user.getPhone().isEmpty())) {
+            return false;
+        }
         return true;
     }
 
@@ -184,7 +185,7 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password(encrypt)
                         rs.getString(9), // Email
-                       // rs.getString(10), // Avatar User
+                        // rs.getString(10), // Avatar User
                         rs.getString(10), // Contacts                                      
                         rs.getBoolean(11) // Check Admin(T/F)                                        
                 ));
@@ -237,7 +238,7 @@ public class UserDAO extends DBContext {
             user.getCountry(), // country
             user.getPassword(), // password
             user.getEmail(), // email
-           // user.getAvatar(), // avatar URL
+            // user.getAvatar(), // avatar URL
             user.getPhone(), // phone (updated from 'contacts')
             user.isIsAdmin(), // isAdmin flag
             user.getUserId() // customer_id
@@ -245,6 +246,23 @@ public class UserDAO extends DBContext {
 
         // Execute the update and return affected rows
         return execQuery(query, params);
+    }
+
+    public void updatePassword(String email, String password) {
+        String sql = "UPDATE Customers\n"
+                + "   SET Password = ?\n"
+                + " WHERE Email = ?";
+        Object[] params = {password, email};
+        try {
+            int rowsUpdated = execQuery(sql, params);
+            if (rowsUpdated > 0) {
+                System.out.println("Cập nhật mật khẩu thành công.");
+            } else {
+                System.out.println("Không tìm thấy email để cập nhật.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật mật khẩu: " + e.getMessage());
+        }
     }
 
     public int deleteUser(int id) {
@@ -341,16 +359,14 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-
     public int createGoogleUser(User user) throws SQLException {
-        String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Avatar) "
+        String createGoogleUser = "INSERT INTO Customers (Customer_ID, Customer_Name, Email, Password) "
                 + "VALUES ((SELECT COALESCE(MAX(Customer_ID), 0) + 1 FROM Customers), ?, ?, ?)";
 
         Object[] params = {
-           user.getFullname(),
-           user.getEmail(),
-           
-        };
+            user.getFullname(),
+            user.getEmail(),
+            user.getPassword(),};
 
         try {
             return execQuery(createGoogleUser, params);
@@ -361,4 +377,3 @@ public class UserDAO extends DBContext {
     }
 
 }
-
