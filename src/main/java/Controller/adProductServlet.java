@@ -53,7 +53,7 @@ public class adProductServlet extends HttpServlet {
 
         int index = (indexPage == null || indexPage.isEmpty()) ? 1 : Integer.parseInt(indexPage);
         request.setAttribute("index", index);
-        
+
         request.setAttribute("types", pDAO.getAllType());
         request.setAttribute("brands", pDAO.getAllBrand());
 
@@ -88,6 +88,8 @@ public class adProductServlet extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(adProductServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            List<Products> products = pDAO.getAll();
 
             request.setAttribute("listPr", list);
             request.setAttribute("endP", endPage);
@@ -157,7 +159,7 @@ public class adProductServlet extends HttpServlet {
             String type = request.getParameter("type");
             int countInStock = Integer.parseInt(request.getParameter("countInStock"));
             double price = Double.parseDouble(request.getParameter("price"));
-            int sold = 0;
+            int selled = 0;
             String description = request.getParameter("description");
             String brand = request.getParameter("brand");
 
@@ -187,13 +189,13 @@ public class adProductServlet extends HttpServlet {
             }
 
             // Tạo product với chuỗi đường dẫn ảnh
-            Products product = new Products(0, productName, countInStock, sold, price, imagePaths.toString(), description, type, brand);
+            Products product = new Products(0, productName, countInStock, selled, price, brand, description, type, brand);
             int result = pDAO.createProduct(product);
             if (result > 0) {
                 response.sendRedirect("Product?action=list");  // Thành công
             } else {
                 request.setAttribute("error", "Failed to create product.");
-                request.getRequestDispatcher("adCreateProduct.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/adCreateProduct.jsp").forward(request, response);
             }
         }
 
@@ -206,7 +208,7 @@ public class adProductServlet extends HttpServlet {
                 int countInStock = Integer.parseInt(request.getParameter("countInStock"));
                 double price = Double.parseDouble(request.getParameter("price"));
                 String brand = request.getParameter("brand");
-                int sold = Integer.parseInt(request.getParameter("sold"));
+                int selled = Integer.parseInt(request.getParameter("selled"));
                 String description = request.getParameter("description");
 
                 // Retrieve existing product to get current images
@@ -242,11 +244,10 @@ public class adProductServlet extends HttpServlet {
 
                 // If no new images were uploaded, keep the current images
                 String image = newImagesUploaded ? imagePaths.toString() : currentImages;
-
-                Products product = new Products(0, productName, countInStock, sold, price, imagePaths.toString(), description, type, brand);
-
+                Products product = new Products(productId, productName, countInStock, selled, price, image, description, type, brand);
                 try {
                     pDAO.updateProduct(product);
+                    System.out.println("L"+ pDAO.updateProduct(product));
                     request.setAttribute("types", pDAO.getAllType());
                     request.setAttribute("brands", pDAO.getAllBrand());
                     response.sendRedirect("Product?action=list");

@@ -13,7 +13,7 @@ public class Products {
     private String image;
     private double price;
     private String brand;
-    private int sold;
+    private int selled;
     private String description;
     private int quanOrder;
     private String status = "Pending";
@@ -21,7 +21,7 @@ public class Products {
     public Products() {
     }
 
-    public Products(int productId, String productName, int countInStock, int sold, double price, String image, String description, String type, String brand) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -29,11 +29,11 @@ public class Products {
         this.image = image;
         this.price = price;
         this.brand = brand != null ? brand : "";
-        this.sold = sold;
+        this.selled = selled;
         this.description = description;
     }
 
-    public Products(int productId, String productName, int countInStock, int sold, double price, String image, String description,  String brand, int quanOrder, String type) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -41,7 +41,7 @@ public class Products {
         this.image = image;
         this.price = price;
         this.brand = brand != null ? brand : "";
-        this.sold = sold;
+        this.selled = selled;
         this.description = description;
         this.quanOrder = quanOrder != 0 ? quanOrder : 1;
     }
@@ -103,11 +103,11 @@ public class Products {
     }
 
     public int getSelled() {
-        return sold;
+        return selled;
     }
 
-    public void setSelled(int sold) {
-        this.sold = sold;
+    public void setSelled(int selled) {
+        this.selled = selled;
     }
 
     public String getDescription() {

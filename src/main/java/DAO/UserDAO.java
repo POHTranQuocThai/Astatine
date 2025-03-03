@@ -264,15 +264,17 @@ public class UserDAO extends DBContext {
     }
 
     public int deleteUser(int id) {
-        String query = "DELETE FROM customers WHERE customer_id = ?";
+        String deleteTokensQuery = "DELETE FROM tokenForgetPassword WHERE userId = ?";
+        String deleteUserQuery = "DELETE FROM customers WHERE customer_id = ?";
 
         Object[] params = {id};
 
         try {
-            return execQuery(query, params);  // Execute the delete query
+            execQuery(deleteTokensQuery, params);
+
+            return execQuery(deleteUserQuery, params);
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            return 0;  // Return 0 if there's an exception
+            return 0;
         }
     }
 
