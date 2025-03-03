@@ -12,8 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import model.Products;
 import model.User;
 
 /**
@@ -43,7 +43,7 @@ public class UserDAO extends DBContext {
     }
 
     public User signup(String fullname, String email, String password) throws SQLException {
-        String getNextIdQuery = "select max(Customer_ID) + 1 as nextId from Customers c";
+        String getNextIdQuery = "SELECT COALESCE(MAX(Customer_ID), 0) + 1 AS nextId FROM Customers";
         User u = new User();
         // Câu lệnh SQL chèn dữ liệu vào bảng customers
         try ( ResultSet rs = execSelectQuery(getNextIdQuery)) {
@@ -53,12 +53,13 @@ public class UserDAO extends DBContext {
                 u.setFullname(fullname);
                 u.setEmail(email);
                 u.setPassword(password);
-                String sql = "INSERT INTO customers VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                // Mình chỉ đặt giả định là bảng 'customers' có 11 cột, bạn cần cung cấp đủ tham số cho câu lệnh
-                Object[] params = {nextId, fullname, "", "", "", "", "", password, email, "", "", 0};
-                // Thực thi câu lệnh INSERT (sử dụng execUpdateQuery thay vì execSelectQuery)
+                String sql = "INSERT INTO customers VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                Object[] params = {nextId, fullname, email, password, "", "", "", "", "", "", 0};
+                System.out.println("SQL: " + sql);
+                System.out.println("Params: " + Arrays.toString(params));
                 int rowsAffected = execQuery(sql, params);
-                // Nếu có dòng dữ liệu nào được chèn, trả về true
+                System.out.println("Rows affected: " + rowsAffected);
+
                 if (rowsAffected > 0) {
                     return u;
                 }
@@ -185,7 +186,6 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password(encrypt)
                         rs.getString(9), // Email
-                        // rs.getString(10), // Avatar User
                         rs.getString(10), // Contacts                                      
                         rs.getBoolean(11) // Check Admin(T/F)                                        
                 ));
@@ -215,7 +215,6 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password (hashed)
                         rs.getString(9), // Email
-                        //rs.getString(10), // Avatar
                         rs.getString(10), // Contacts
                         rs.getBoolean(11) // Admin flag
                 );
@@ -227,7 +226,7 @@ public class UserDAO extends DBContext {
     }
 
     public int updateUser(User user) throws SQLException {
-        String query = "UPDATE Customers SET customer_name = ?, street = ?, ward = ?, district = ?, city = ?, country = ?, password = ?, email = ?, avatar = ?, phone = ?, isAdmin = ? WHERE customer_id = ?";
+        String query = "UPDATE Customers SET customer_name = ?, street = ?, ward = ?, district = ?, city = ?, country = ?, password = ?, email = ?, phone = ?, isAdmin = ? WHERE customer_id = ?";
 
         Object[] params = {
             user.getFullname(), // customer_name
@@ -238,7 +237,6 @@ public class UserDAO extends DBContext {
             user.getCountry(), // country
             user.getPassword(), // password
             user.getEmail(), // email
-            // user.getAvatar(), // avatar URL
             user.getPhone(), // phone (updated from 'contacts')
             user.isIsAdmin(), // isAdmin flag
             user.getUserId() // customer_id
@@ -323,12 +321,9 @@ public class UserDAO extends DBContext {
     }
 
     public List<User> getPagingAd(int index) throws SQLException {
-        String query = "SELECT \n"
-                + "    C.* \n"
-                + "FROM \n"
-                + "    Customers C\n"
-                + "ORDER BY \n"
-                + "    C.Customer_ID\n"
+        String query = "SELECT C.* \n"
+                + "FROM Customers C\n"
+                + "ORDER BY C.Customer_ID\n"
                 + "OFFSET ? ROWS \n"
                 + "FETCH FIRST 6 ROWS ONLY;";
         List<User> list = new ArrayList<>();
@@ -337,7 +332,6 @@ public class UserDAO extends DBContext {
             ps.setInt(1, (index - 1) * 6);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String[] image = rs.getString(10).split(",");
                 list.add(new User(
                         rs.getInt(1), // ID
                         rs.getString(2), // Fullname
@@ -348,7 +342,6 @@ public class UserDAO extends DBContext {
                         rs.getString(7), // Country
                         rs.getString(8), // Password (hashed)
                         rs.getString(9), // Email
-                        //image[0], // Avatar
                         rs.getString(10), // Contacts
                         rs.getBoolean(11) // Admin flag
                 ));

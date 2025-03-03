@@ -60,6 +60,7 @@ public class LoginServlet extends HttpServlet {
 
                     session.setAttribute("User", user);
                     session.setAttribute("email", user.getEmail());
+                    session.setAttribute("isAdmin", user.isIsAdmin());
 
                     response.sendRedirect("Home");
                 } catch (SQLException ex) {
@@ -68,6 +69,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 session.setAttribute("User", user);
                 session.setAttribute("email", user.getEmail());
+                session.setAttribute("isAdmin", user.isIsAdmin());
 
                 response.sendRedirect("Home");
             }
@@ -114,6 +116,7 @@ public class LoginServlet extends HttpServlet {
                 user = uDAO.getUserByEmail(email);
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("User", user);
+                session.setAttribute("isAdmin", user.isIsAdmin());
 
                 Cookie u = new Cookie("user", email);
                 u.setMaxAge(60);

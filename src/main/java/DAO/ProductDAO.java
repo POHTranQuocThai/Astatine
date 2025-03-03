@@ -517,20 +517,40 @@ public class ProductDAO extends DBContext {
         return find; // Trả về danh sách các sản phẩm cùng loại
     }
 
-    // Hàm lay' tông? sô' trang
-    public int getNumberPage() {
-        String query = "Select count(*) from Products";
-        try ( ResultSet rs = execSelectQuery(query)) {
-            while (rs.next()) {
+    public int getNumberPage(String brand, String category) {
+        String query = "SELECT COUNT(*) FROM Products p "
+                + "JOIN Brands b ON p.Brand_ID = b.Brand_ID "
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id ";
+        List<String> conditions = new ArrayList<>();
+        if (brand != null && !brand.isEmpty()) {
+            conditions.add("b.Brand_Name = ?");
+        }
+        if (category != null && !category.isEmpty()) {
+            conditions.add("c.Category_Name = ?");
+        }
+        if (!conditions.isEmpty()) {
+            query += " WHERE " + String.join(" AND ", conditions);
+        }
+
+        Object[] params = new Object[]{};
+        if (brand != null && !brand.isEmpty()) {
+            params = new Object[]{brand};
+        }
+        if (category != null && !category.isEmpty()) {
+            params = (params.length > 0) ? new Object[]{params[0], category} : new Object[]{category};
+        }
+
+        try ( ResultSet rs = execSelectQuery(query, params)) {
+            if (rs.next()) {
                 int total = rs.getInt(1);
-                int countPage = 0;
-                countPage = total / 12;
+                int countPage = total / 12;
                 if (total % 12 != 0) {
                     countPage++;
                 }
                 return countPage;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return 0;
     }
@@ -649,19 +669,32 @@ public class ProductDAO extends DBContext {
         }
     }
 
+    // Hàm lay' tông? sô' trang
+    public int getNumberPageAd() {
+        String query = "Select count(*) from Products";
+        try ( ResultSet rs = execSelectQuery(query)) {
+            while (rs.next()) {
+                int total = rs.getInt(1);
+                int countPage = 0;
+                countPage = total / 12;
+                if (total % 12 != 0) {
+                    countPage++;
+                }
+                return countPage;
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
     public List<Products> getPagingAd(int index) throws SQLException {
-        String query = "SELECT \n"
-                + "    P.*, \n"
+        String query = "SELECT P.*, \n"
                 + "    ISNULL(B.brand_name, 'ABCX') AS brand_name,\n"
                 + "    C.Category_Name\n"
-                + "FROM \n"
-                + "    Products P\n"
-                + "LEFT JOIN \n"
-                + "    Brands B ON P.brand_id = B.brand_id\n"
-                + "LEFT JOIN \n"
-                + "    Categories C ON P.Category_Id = C.Category_Id\n"
-                + "ORDER BY \n"
-                + "    P.Product_ID\n"
+                + "FROM Products P\n"
+                + "JOIN Brands B ON P.brand_id = B.brand_id\n"
+                + "JOIN Categories C ON P.Category_Id = C.Category_Id\n"
+                + "ORDER BY P.Product_ID\n"
                 + "OFFSET ? ROWS \n"
                 + "FETCH NEXT 6 ROWS ONLY";
         List<Products> list = new ArrayList<>();
@@ -671,12 +704,12 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 String[] image = rs.getString(8).split(",");
                 list.add(new Products(
-                        rs.getInt(1), // Cột ID
-                        rs.getString(2), // Cột tên sản phẩm
-                        rs.getInt(5), // Cột số lượng
-                        rs.getInt(6), // Cột selled
-                        rs.getDouble(7), // Cột giá
-                        image[0], // Mảng hình ảnh từ cột hình ảnh
+                        rs.getInt(1), // id
+                        rs.getString(2), // product name
+                        rs.getInt(5), // count in stock
+                        rs.getInt(6), // sold
+                        rs.getDouble(7), // price
+                        image[0], // image
                         rs.getString(9), // Cột tên thương hiệu
                         rs.getString(10), // Cột trạng thái
                         rs.getString(11) // Cột mô tả
@@ -690,4 +723,3 @@ public class ProductDAO extends DBContext {
     }
 
 }
-

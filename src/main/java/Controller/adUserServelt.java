@@ -24,12 +24,6 @@ import model.User;
  *
  * @author Ma Tan Loc - CE181795
  */
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 50 // 50MB
-)
-
 public class adUserServelt extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -51,31 +45,48 @@ public class adUserServelt extends HttpServlet {
         String idParam = request.getParameter("id");
         String indexPage = request.getParameter("index");
 
+        int index = (indexPage == null || indexPage.isEmpty()) ? 1 : Integer.parseInt(indexPage);
+        request.setAttribute("index", index);
+
         if (action == null) {
             action = "list";
         }
         if ("list".equals(action)) {
-            if (indexPage == null) {
-                indexPage = "1";
-            }
-            int index = Integer.parseInt(indexPage);
-
             int count = uDAO.getNumberPage();
-            int endPage = count / 3; // Adjust for 6 items per page
+            int endPage = count / 3;
             if (count % 3 != 0) {
                 endPage++;
             }
+
+            int maxPagesToShow = 6;
+            int startPage, endPageLimit;
+
+            if (index <= maxPagesToShow / 2) {
+                startPage = 1;
+                endPageLimit = Math.min(maxPagesToShow, endPage);
+            } else if (index > endPage - maxPagesToShow / 2) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                endPageLimit = endPage;
+            } else {
+                startPage = index - maxPagesToShow / 2;
+                endPageLimit = startPage + maxPagesToShow - 1;
+            }
+            
             List<User> list = null;
             try {
                 list = uDAO.getPagingAd(index);
             } catch (SQLException ex) {
                 Logger.getLogger(adUserServelt.class.getName()).log(Level.SEVERE, null, ex);
             }
-
             request.setAttribute("listPr", list);
             request.setAttribute("endP", endPage);
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPageLimit", endPageLimit);
+            request.setAttribute("currentPage", index);
+            
             request.getRequestDispatcher("/WEB-INF/adListUser.jsp").forward(request, response);
         }
+
         if (idParam == null || idParam.isEmpty()) {
             if ("edit".equals(action)) {
                 request.getRequestDispatcher("/WEB-INF/adEditUser.jsp").forward(request, response);
@@ -94,6 +105,7 @@ public class adUserServelt extends HttpServlet {
                 int id = Integer.parseInt(idParam);
                 User user = uDAO.getUserById(id);
                 request.setAttribute("user", user);
+                System.out.println(user);
                 request.getRequestDispatcher("/WEB-INF/adDeleteUser.jsp").forward(request, response);
             }
         }
@@ -131,33 +143,7 @@ public class adUserServelt extends HttpServlet {
             String city = request.getParameter("city");
             String country = request.getParameter("country");
 
-            // Lấy đường dẫn của dự án và lưu vào trong img/product/
-            String applicationPath = getServletContext().getRealPath("");
-            String uploadPath = applicationPath.replace("build\\", "") + "assets\\img\\product";
-
-            System.out.println("IMG: " + uploadPath);
-
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs(); // Tạo thư mục nếu chưa tồn tại
-            }
-
-            // Xử lý nhiều ảnh và nối đường dẫn bằng dấu phẩy
-            StringBuilder imagePaths = new StringBuilder();
-            for (Part filePart : request.getParts()) {
-                if (filePart.getName().equals("avatar") && filePart.getSize() > 0) { // Kiểm tra part là hình ảnh
-                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // Lấy tên file
-                    filePart.write(uploadPath + File.separator + fileName); // Tiến hành lưu file
-
-                    if (imagePaths.length() > 0) {
-                        imagePaths.append(","); // Thêm dấu phẩy nếu đã có ảnh trước đó
-                    }
-                    imagePaths.append("assets\\img\\product\\").append(fileName); // Lưu đường dẫn ảnh
-                }
-            }
-
             User user = new User(userId, fullname, email, password, phone, street, ward, district, city, country, isAdmin);
-
 
             try {
                 uDAO.updateUser(user);
@@ -171,7 +157,6 @@ public class adUserServelt extends HttpServlet {
         }
 
         if (action.equals("delete")) {
-
             uDAO.deleteUser(id);
             response.sendRedirect("User?action=list");
         }

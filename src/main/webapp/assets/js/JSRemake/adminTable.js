@@ -13,32 +13,6 @@ function toggleSidebar() {
     closeAllSubMenus();
 }
 
-function toggleSubMenu(button) {
-    if (!button.nextElementSibling.classList.contains('show')) {
-        closeAllSubMenus();
-    }
-
-    button.nextElementSibling.classList.toggle('show');
-    button.classList.toggle('rotate');
-
-    if (sidebar.classList.contains('close')) {
-        sidebar.classList.toggle('close');
-        toggleButton.classList.toggle('rotate');
-    }
-}
-
-function closeAllSubMenus() {
-    Array.from(sidebar.getElementsByClassName('show')).forEach(ul => {
-        ul.classList.remove('show');
-        ul.previousElementSibling.classList.remove('rotate');
-    });
-}
-
-function closeModal() {
-    const modal = document.querySelector('.modal-container');
-    if (modal) modal.classList.remove('show');
-}
-
 // Table Search and Sorting
 const search = document.querySelector('.input-group input');
 const table_rows = document.querySelectorAll('tbody tr');
