@@ -1,6 +1,6 @@
 
-
 package model;
+import java.text.DecimalFormat;
 /**
  *
  * @author Tran Quoc Thai - CE181618
@@ -13,28 +13,29 @@ public class Products {
     private int countInStock;
     private String image;
     private double price;
-    private String brand;
+    private String brand;  // Tên thuộc tính vẫn là "brand"
     private int selled;
     private String description;
     private int quanOrder;
     private String status = "Pending";
+ 
 
     public Products() {
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand) {
+     public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand) {
         this.productId = productId;
         this.productName = productName;
-        this.type = type;
         this.countInStock = countInStock;
-        this.image = image;
-        this.price = price;
-        this.brand = brand != null ? brand : "";
         this.selled = selled;
+        this.price = price;
+        this.image = image;
+        this.brand = brand;
+        this.type = type; // Gán category
         this.description = description;
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type,  String brand,  int quanOrder ) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -134,7 +135,15 @@ public class Products {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    
+    public String getCategory() {
+        return category;
+    }
 }
-
+//    public String formatVietnameseCurrency(double number) {
+//    // Chuyển số thành chuỗi, thêm dấu chấm phân cách hàng nghìn, và thêm đơn vị VNĐ
+//    DecimalFormat formatter = new DecimalFormat("#,###");
+//        // Format số và thêm đơn vị "đ"
+//        return formatter.format(number) + " đ";
+//}
 
