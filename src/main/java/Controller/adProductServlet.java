@@ -51,6 +51,9 @@ public class adProductServlet extends HttpServlet {
         String idParam = request.getParameter("id");
         String indexPage = request.getParameter("index");
 
+        int index = (indexPage == null || indexPage.isEmpty()) ? 1 : Integer.parseInt(indexPage);
+        request.setAttribute("index", index);
+
         request.setAttribute("types", pDAO.getAllType());
         request.setAttribute("brands", pDAO.getAllBrand());
 
@@ -59,24 +62,41 @@ public class adProductServlet extends HttpServlet {
         }
 
         if ("list".equals(action)) {
-            if (indexPage == null) {
-                indexPage = "1";
-            }
-            int index = Integer.parseInt(indexPage);
-
-            int count = pDAO.getNumberPage();
-            int endPage = count / 3; // Adjust for 6 items per page
-            if (count % 3 != 0) {
+            int count = pDAO.getNumberPageAd();
+            int endPage = count / 6;
+            if (count % 6 != 0) {
                 endPage++;
             }
+
+            int maxPagesToShow = 6;
+            int startPage, endPageLimit;
+
+            if (index <= maxPagesToShow / 2) {
+                startPage = 1;
+                endPageLimit = Math.min(maxPagesToShow, endPage);
+            } else if (index > endPage - maxPagesToShow / 2) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                endPageLimit = endPage;
+            } else {
+                startPage = index - maxPagesToShow / 2;
+                endPageLimit = startPage + maxPagesToShow - 1;
+            }
+
             List<Products> list = null;
             try {
                 list = pDAO.getPagingAd(index);
             } catch (SQLException ex) {
                 Logger.getLogger(adProductServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            List<Products> products = pDAO.getAll();
+
             request.setAttribute("listPr", list);
             request.setAttribute("endP", endPage);
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPageLimit", endPageLimit);
+            request.setAttribute("currentPage", index);
+
             request.getRequestDispatcher("/WEB-INF/adListProduct.jsp").forward(request, response);
             return;
         }
@@ -169,13 +189,13 @@ public class adProductServlet extends HttpServlet {
             }
 
             // Tạo product với chuỗi đường dẫn ảnh
-            Products product = new Products(0, productName, countInStock, selled, price, imagePaths.toString(), description, type, brand);
+            Products product = new Products(0, productName, countInStock, selled, price, brand, description, type, brand);
             int result = pDAO.createProduct(product);
             if (result > 0) {
                 response.sendRedirect("Product?action=list");  // Thành công
             } else {
                 request.setAttribute("error", "Failed to create product.");
-                request.getRequestDispatcher("adCreateProduct.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/adCreateProduct.jsp").forward(request, response);
             }
         }
 
@@ -224,11 +244,10 @@ public class adProductServlet extends HttpServlet {
 
                 // If no new images were uploaded, keep the current images
                 String image = newImagesUploaded ? imagePaths.toString() : currentImages;
-
-                Products product = new Products(0, productName, countInStock, selled, price, imagePaths.toString(), description, type, brand);
-
+                Products product = new Products(productId, productName, countInStock, selled, price, image, description, type, brand);
                 try {
                     pDAO.updateProduct(product);
+                    System.out.println("L"+ pDAO.updateProduct(product));
                     request.setAttribute("types", pDAO.getAllType());
                     request.setAttribute("brands", pDAO.getAllBrand());
                     response.sendRedirect("Product?action=list");

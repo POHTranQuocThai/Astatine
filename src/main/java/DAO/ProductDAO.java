@@ -36,13 +36,10 @@ public class ProductDAO extends DBContext {
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
         String query = "SELECT P.*, C.Category_Name, \n"
-                + "                ISNULL(B.brand_name, 'ABCX') AS brand_name\n"
-                + "              FROM \n"
-                + "                  Products P\n"
-                + "               JOIN \n"
-                + "                  Brands B ON P.brand_id = B.brand_id\n"
-                + "				  join\n"
-                + "				  Categories C on P.Category_Id = C.Category_Id";
+                + "ISNULL(B.brand_name, 'ABCX') AS brand_name\n"
+                + "FROM Products P\n"
+                + "JOIN Brands B ON P.brand_id = B.brand_id\n"
+                + "join Categories C on P.Category_Id = C.Category_Id";
 
         // Thực thi truy vấn và lấy kết quả trả về
         try ( ResultSet rs = execSelectQuery(query)) {
@@ -107,11 +104,10 @@ public class ProductDAO extends DBContext {
     }
 
     public Products getProductById(int id) {
-        String query = "SELECT P.*, C.Category_Name, \n"
-                + "B.brand_name\n"
+        String query = "SELECT P.*, C.Category_Name, B.brand_name\n"
                 + "FROM Products P\n"
-                + "JOIN Brands B ON P.brand_id = B.brand_id\n"
-                + "join Categories C on P.Category_Id = C.Category_Id\n"
+                + "LEFT join Categories C on P.Category_Id = C.Category_Id\n"
+                + "LEFT JOIN Brands B ON P.brand_id = B.brand_id\n"
                 + "LEFT JOIN order_details o ON P.product_id = o.product_id\n"
                 + "WHERE P.Product_ID = ?";
 
@@ -119,7 +115,7 @@ public class ProductDAO extends DBContext {
         try ( ResultSet rs = execSelectQuery(query, params)) {
             // Lặp qua từng hàng trong tập kết quả
             if (rs.next()) {
-                return new Products(rs.getInt(1), rs.getString(2), rs.getInt(5), rs.getInt(6), rs.getDouble(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11));// Cột giá                       
+                return new Products(rs.getInt(1), rs.getString(2), rs.getInt(5), rs.getInt(6), rs.getDouble(7), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12));
 
             }
         } catch (Exception e) {
@@ -282,18 +278,12 @@ public class ProductDAO extends DBContext {
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
         String query
-                = "SELECT \n"
-                + "    P.*, B.Brand_Name, C.Category_Name\n"
-                + "FROM \n"
-                + "    Products P\n"
-                + "JOIN \n"
-                + "    Brands B ON P.brand_id = B.brand_id\n"
-                + "JOIN \n"
-                + "    Categories C ON P.Category_Id = C.Category_Id\n"
-                + "WHERE \n"
-                + "    B.Brand_Name = ?\n"
-                + "ORDER BY \n"
-                + "    P.Product_ID\n"
+                = "SELECT P.*, B.Brand_Name, C.Category_Name\n"
+                + "FROM Products P\n"
+                + "JOIN Brands B ON P.brand_id = B.brand_id\n"
+                + "JOIN Categories C ON P.Category_Id = C.Category_Id\n"
+                + "WHERE B.Brand_Name = ?\n"
+                + "ORDER BY P.Product_ID\n"
                 + "OFFSET ? ROWS\n"
                 + "FETCH NEXT 6 ROWS ONLY";
 
@@ -331,14 +321,11 @@ public class ProductDAO extends DBContext {
         ArrayList<Products> prod = new ArrayList<>();
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
-        String query = "SELECT \n"
-                + "    p.*, b.Brand_Name, c.Category_Name\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "    JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
-                + "    JOIN Categories c ON p.Category_Id = c.Category_Id\n"
-                + "ORDER BY \n"
-                + "    p.price ASC;";
+        String query = "SELECT p.*, b.Brand_Name, c.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id\n"
+                + "ORDER BY p.price ASC;";
 
         // Thực thi truy vấn và lấy kết quả trả về
         try ( ResultSet rs = execSelectQuery(query)) {
@@ -368,14 +355,11 @@ public class ProductDAO extends DBContext {
         ArrayList<Products> prod = new ArrayList<>();
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
-        String query = "SELECT \n"
-                + "    p.*, b.Brand_Name, c.Category_Name\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "    JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
-                + "    JOIN Categories c ON p.Category_Id = c.Category_Id\n"
-                + "ORDER BY \n"
-                + "    p.price DESC";
+        String query = "SELECT p.*, b.Brand_Name, c.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id\n"
+                + "ORDER BY p.price DESC";
 
         // Thực thi truy vấn và lấy kết quả trả về
         try ( ResultSet rs = execSelectQuery(query)) {
@@ -405,14 +389,11 @@ public class ProductDAO extends DBContext {
         ArrayList<Products> prod = new ArrayList<>();
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
-        String query = "SELECT \n"
-                + "    p.*, b.Brand_Name, c.Category_Name\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "    JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
-                + "    JOIN Categories c ON p.Category_Id = c.Category_Id\n"
-                + "ORDER BY \n"
-                + "    p.Product_Name ASC";
+        String query = "SELECT p.*, b.Brand_Name, c.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id\n"
+                + "ORDER BY p.Product_Name ASC";
 
         // Thực thi truy vấn và lấy kết quả trả về
         try ( ResultSet rs = execSelectQuery(query)) {
@@ -442,14 +423,11 @@ public class ProductDAO extends DBContext {
         ArrayList<Products> prod = new ArrayList<>();
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
-        String query = "SELECT \n"
-                + "    p.*, b.Brand_Name, c.Category_Name\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "    JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
-                + "    JOIN Categories c ON p.Category_Id = c.Category_Id\n"
-                + "ORDER BY \n"
-                + "    p.Product_Name DESC";
+        String query = "SELECT p.*, b.Brand_Name, c.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON b.Brand_ID = p.Brand_ID\n"
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id\n"
+                + "ORDER BY p.Product_Name DESC";
 
         // Thực thi truy vấn và lấy kết quả trả về
         try ( ResultSet rs = execSelectQuery(query)) {
@@ -478,16 +456,11 @@ public class ProductDAO extends DBContext {
         ArrayList<Products> find = new ArrayList<>();
 
         // Câu truy vấn SQL để chọn tất cả các cột từ bảng 'products'
-        String query = "SELECT \n"
-                + "    p.*,\n"
-                + "    b.Brand_Name,\n"
-                + "    c.Category_Name\n"
-                + "FROM \n"
-                + "    Products p \n"
-                + "    JOIN Brands b ON p.Brand_ID = b.Brand_ID\n"
-                + "    JOIN Categories c ON p.Category_Id = c.Category_Id\n"
-                + "WHERE \n"
-                + "    p.product_name LIKE '%' + ? + '%'";
+        String query = "SELECT p.*, b.Brand_Name, c.Category_Name\n"
+                + "FROM Products p \n"
+                + "JOIN Brands b ON p.Brand_ID = b.Brand_ID\n"
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id\n"
+                + "WHERE p.product_name LIKE '%' + ? + '%'";
         // Truyền trực tiếp tham số category vào mảng params
         Object[] params = {search};
 
@@ -517,20 +490,40 @@ public class ProductDAO extends DBContext {
         return find; // Trả về danh sách các sản phẩm cùng loại
     }
 
-    // Hàm lay' tông? sô' trang
-    public int getNumberPage() {
-        String query = "Select count(*) from Products";
-        try ( ResultSet rs = execSelectQuery(query)) {
-            while (rs.next()) {
+    public int getNumberPage(String brand, String category) {
+        String query = "SELECT COUNT(*) FROM Products p "
+                + "JOIN Brands b ON p.Brand_ID = b.Brand_ID "
+                + "JOIN Categories c ON p.Category_Id = c.Category_Id ";
+        List<String> conditions = new ArrayList<>();
+        if (brand != null && !brand.isEmpty()) {
+            conditions.add("b.Brand_Name = ?");
+        }
+        if (category != null && !category.isEmpty()) {
+            conditions.add("c.Category_Name = ?");
+        }
+        if (!conditions.isEmpty()) {
+            query += " WHERE " + String.join(" AND ", conditions);
+        }
+
+        Object[] params = new Object[]{};
+        if (brand != null && !brand.isEmpty()) {
+            params = new Object[]{brand};
+        }
+        if (category != null && !category.isEmpty()) {
+            params = (params.length > 0) ? new Object[]{params[0], category} : new Object[]{category};
+        }
+
+        try ( ResultSet rs = execSelectQuery(query, params)) {
+            if (rs.next()) {
                 int total = rs.getInt(1);
-                int countPage = 0;
-                countPage = total / 12;
+                int countPage = total / 12;
                 if (total % 12 != 0) {
                     countPage++;
                 }
                 return countPage;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return 0;
     }
@@ -569,7 +562,9 @@ public class ProductDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String[] image = rs.getString(8).split(",");
+                String imgData = rs.getString(9);
+                String[] image = (imgData != null) ? imgData.split(",") : new String[]{""};
+
                 list.add(new Products(
                         rs.getInt(1), // Cột ID
                         rs.getString(2), // Cột tên sản phẩm
@@ -577,9 +572,9 @@ public class ProductDAO extends DBContext {
                         rs.getInt(6), // Cột selled
                         rs.getDouble(7), // Cột giá
                         image[0], // Mảng hình ảnh từ cột hình ảnh
-                        rs.getString(9), // Cột tên thương hiệu
-                        rs.getString(10), // Cột trạng thái
-                        rs.getString(11) // Cột mô tả
+                        rs.getString(10), // Cột tên thương hiệu
+                        rs.getString(11), // Cột trạng thái
+                        rs.getString(12) // Cột mô tả
                 ));
             }
             rs.close();
@@ -591,10 +586,10 @@ public class ProductDAO extends DBContext {
 
     // Method to create a new product
     public int createProduct(Products product) {
-        String createProductQuery = "INSERT INTO Products (Product_ID, Product_Name, type, countInStock, image, price, Selled, Brand_ID, description) "
-                + "VALUES ((SELECT COALESCE(MAX(Product_ID), 0) + 1 FROM Products), ?, ?, ?, ?, ?, ?, "
+        String createProductQuery = "INSERT INTO Products (Product_ID, Product_Name, Category_Id, Count_In_Stock, image, price, Sold, Brand_ID, Description)\n"
+                + "VALUES ((SELECT COALESCE(MAX(Product_ID), 0) + 1 FROM Products), ?, \n"
+                + "(SELECT Category_Id FROM Categories WHERE Category_Name = ?), ?, ?, ?, ?,\n"
                 + "(SELECT Brand_ID FROM Brands WHERE Brand_Name = ?), ?)";
-
         Object[] params = {
             product.getProductName(),
             product.getType(),
@@ -605,7 +600,6 @@ public class ProductDAO extends DBContext {
             product.getBrand(),
             product.getDescription()
         };
-
         try {
             return execQuery(createProductQuery, params);
         } catch (SQLException ex) {
@@ -616,8 +610,15 @@ public class ProductDAO extends DBContext {
 
     // Method to update a product
     public int updateProduct(Products product) throws SQLException {
-        String query = "UPDATE Products SET Product_Name = ?, type = ?, Brand_ID = (SELECT Brand_ID FROM Brands WHERE Brand_Name = ?), countInStock = ?, image = ?, Price = ?, Selled = ?, description = ? WHERE Product_ID = ?";
-
+        String query = "UPDATE Products SET Product_Name = ?, \n"
+                + "Category_Id = (SELECT Category_Id FROM Categories WHERE Category_Name = ?), \n"
+                + "Brand_ID = (SELECT Brand_ID FROM Brands WHERE Brand_Name = ?), \n"
+                + "Count_In_Stock = ?, \n"
+                + "image = ?, \n"
+                + "Price = ?, \n"
+                + "Sold = ?, \n"
+                + "description = ? \n"
+                + "WHERE Product_ID = ?";
         Object[] params = {
             product.getProductName(),
             product.getType(),
@@ -637,7 +638,6 @@ public class ProductDAO extends DBContext {
         String query = "UPDATE Orders\n"
                 + "SET Product_ID = NULL\n"
                 + "WHERE Product_ID = ?\n"
-                + "\n"
                 + "DELETE FROM Products\n"
                 + "WHERE Product_ID = ?";
         Object[] params = {productId};
@@ -649,39 +649,59 @@ public class ProductDAO extends DBContext {
         }
     }
 
+    // Hàm lay' tông? sô' trang
+    public int getNumberPageAd() {
+        String query = "Select count(*) from Products";
+        try ( ResultSet rs = execSelectQuery(query)) {
+            while (rs.next()) {
+                int total = rs.getInt(1);
+                int countPage = 0;
+                countPage = total / 12;
+                if (total % 12 != 0) {
+                    countPage++;
+                }
+                return countPage;
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
     public List<Products> getPagingAd(int index) throws SQLException {
         String query = "SELECT \n"
-                + "    P.*, \n"
-                + "    ISNULL(B.brand_name, 'ABCX') AS brand_name,\n"
-                + "    C.Category_Name\n"
-                + "FROM \n"
-                + "    Products P\n"
-                + "LEFT JOIN \n"
-                + "    Brands B ON P.brand_id = B.brand_id\n"
-                + "LEFT JOIN \n"
-                + "    Categories C ON P.Category_Id = C.Category_Id\n"
-                + "ORDER BY \n"
-                + "    P.Product_ID\n"
+                + "P.Product_ID, \n"
+                + "P.Product_Name,\n"
+                + "p.Count_In_Stock,\n"
+                + "p.Sold,\n"
+                + "P.Price,\n"
+                + "p.Image,\n"
+                + "p.Description,\n"
+                + "C.Category_Name,\n"
+                + "ISNULL(B.brand_name, 'ABCX') AS brand_name\n"
+                + "FROM Products P\n"
+                + "JOIN Brands B ON P.brand_id = B.brand_id\n"
+                + "JOIN Categories C ON P.Category_Id = C.Category_Id\n"
+                + "ORDER BY P.Product_ID\n"
                 + "OFFSET ? ROWS \n"
-                + "FETCH NEXT 6 ROWS ONLY";
+                + "FETCH NEXT 6 ROWS ONLY;";
         List<Products> list = new ArrayList<>();
         try ( PreparedStatement ps = getConnection().prepareStatement(query)) {
             ps.setInt(1, (index - 1) * 6);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String[] image = rs.getString(8).split(",");
+                String imgData = rs.getString(6);
+                String[] image = (imgData != null) ? imgData.split(",") : new String[]{""};
                 list.add(new Products(
-                        rs.getInt(1), // Cột ID
-                        rs.getString(2), // Cột tên sản phẩm
-                        rs.getInt(5), // Cột số lượng
-                        rs.getInt(6), // Cột selled
-                        rs.getDouble(7), // Cột giá
-                        image[0], // Mảng hình ảnh từ cột hình ảnh
-                        rs.getString(9), // Cột tên thương hiệu
-                        rs.getString(10), // Cột trạng thái
-                        rs.getString(11) // Cột mô tả
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getInt(3),
+                        rs.getInt(4),
+                        rs.getDouble(5),
+                        image[0],
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9)
                 ));
-
             }
             return list;
         } catch (Exception e) {
@@ -690,4 +710,3 @@ public class ProductDAO extends DBContext {
     }
 
 }
-

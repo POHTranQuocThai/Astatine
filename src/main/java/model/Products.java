@@ -1,6 +1,6 @@
 
+
 package model;
-import java.text.DecimalFormat;
 /**
  *
  * @author Tran Quoc Thai - CE181618
@@ -13,7 +13,7 @@ public class Products {
     private int countInStock;
     private String image;
     private double price;
-    private String brand;  // Tên thuộc tính vẫn là "brand"
+    private String brand;
     private int selled;
     private String description;
     private int quanOrder;
@@ -34,7 +34,7 @@ public class Products {
         this.description = description;
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand, int quanOrder ) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -136,4 +136,5 @@ public class Products {
     }
 
 }
+
 

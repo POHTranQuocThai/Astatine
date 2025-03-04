@@ -77,64 +77,50 @@
                 <h1>Edit User</h1>
 
                 <div class="form">
-                    <form action="User?action=edit" method="post" enctype="multipart/form-data">
+                    <form action="User?action=edit" method="post">
 
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="id" id="userId" value="${user.userId}">
+                        <input type="hidden" id="password" name="password" value="${user.password}">
+                        <input type="hidden" id="country" name="country" value="${user.country}">
 
-                        <div class="top-left">
+                        <div class="top">
                             <!-- Full Name -->
                             <label for="fullname">Full Name:</label>
-                            <input type="text" id="fullname" name="fullname" value="${user.fullname}" placeholder="Full NAme"><br>
+                            <input type="text" id="fullname" name="fullname" value="${user.fullname}" placeholder="Full NAme">
 
                             <!-- Email -->
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" value="${user.email}" placeholder="Enail"><br>
-
-                            <!-- Password -->
-                            <label for="password">Password:</label>
-                            <input type="password" id="password" name="password" value="${user.password}" placeholder="Password"><br>
+                            <input type="email" id="email" name="email" value="${user.email}" placeholder="Enail" readonly>                          
 
                             <!-- Phone -->
                             <label for="phone">Phone:</label>
-                            <input type="text" id="phone" name="phone" value="${user.phone}" placeholder="Phone"><br>
+                            <input type="text" id="phone" name="phone" value="${user.phone}" placeholder="Phone">
 
                             <div class="admin-check">
                                 <!-- Admin Flag -->
                                 <label for="isAdmin">Admin:</label>
-                                <input type="checkbox" id="isAdmin" name="isAdmin" ${user.isAdmin ? 'checked' : ''}><br>
+                                <input type="checkbox" id="isAdmin" name="isAdmin" ${user.isAdmin ? 'checked' : ''}>
                             </div>
                         </div>
 
-                        <div class="top-right">
+                        <div class="bottom">
                             <!-- Street -->
                             <label for="street">Street:</label>
-                            <input type="text" id="street" name="street" value="${user.street}" placeholder="Street"><br>
+                            <input type="text" id="street" name="street" value="${user.street}" placeholder="Street">
 
                             <!-- Ward -->
                             <label for="ward">Ward:</label>
-                            <input type="text" id="ward" name="ward" value="${user.ward}" placeholder="Ward"><br>
+                            <input type="text" id="ward" name="ward" value="${user.ward}" placeholder="Ward">
 
                             <!-- District -->
                             <label for="district">District:</label>
-                            <input type="text" id="district" name="district" value="${user.district}" placeholder="District"><br>
+                            <input type="text" id="district" name="district" value="${user.district}" placeholder="District">
 
                             <!-- City -->
                             <label for="city">City:</label>
-                            <input type="text" id="city" name="city" value="${user.city}" placeholder="City"><br>
-
-                            <!-- Country -->
-                            <label for="country">Country:</label>
-                            <input type="text" id="country" name="country" value="${user.country}" placeholder="Country"><br>
+                            <input type="text" id="city" name="city" value="${user.city}" placeholder="City">
                         </div>
-
-                        <div class="center-bottom">
-                            <div class="image_input">
-                                <i class="bi bi-cloud-arrow-up-fill" style="font-size: 3rem"></i>
-                                <input type="file" id="avatar" name="avatar" accept="image/*" hidden><br>
-                                <label for="avatar">Choose a image:</label>
-                            </div>
-                        </div>  
 
                         <!-- Save Button -->
                         <button type="submit" class="submit-btn" onclick="location.href = 'User'">

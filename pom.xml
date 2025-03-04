@@ -104,7 +104,6 @@
             <artifactId>json</artifactId>
             <version>20230227</version>
         </dependency>
-
   
         <!-- WebSocket API cho Java EE 7 -->
         <dependency>
@@ -126,6 +125,21 @@
             <version>7.0</version>
             <type>jar</type>
         </dependency>
+        
+        <!-- Jakarta Mail -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        
     </dependencies>
 
 

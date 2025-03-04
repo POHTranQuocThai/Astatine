@@ -705,7 +705,7 @@
                         </text>
                         </g>
                         </svg>
-                        <img src="../assets/img/logo.png" alt="alt"/>
+                        <img src="assets/img/logo.png" alt="alt"/>
                     </div>
                     <div id="chat-widget" style="display: block">
                         <div id="chat-header">Astatine Admin</div>
