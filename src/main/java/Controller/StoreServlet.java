@@ -36,7 +36,9 @@ public class StoreServlet extends HttpServlet {
         String minPriceParam = request.getParameter("price-min");
         String maxPriceParam = request.getParameter("price-max");
         
+       // Phân trang
         String page = request.getParameter("page");
+
 
         int indexPage = 1;
         try {
@@ -58,6 +60,7 @@ public class StoreServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
+
         }
 
         List<Products> list = Collections.emptyList();
@@ -164,5 +167,7 @@ public class StoreServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+
     }
 }
+

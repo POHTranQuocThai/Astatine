@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Products;
-import model.User;
 
 /**
  *
@@ -44,10 +43,11 @@ public class ProductServlet extends HttpServlet {
         String view = request.getParameter("view");
         int userId = 0;
         // Kiểm tra nếu cả danh sách tất cả sản phẩm và danh sách sản phẩm bán chạy không rỗng
-        HttpSession session = request.getSession(false); // false để không tạo mới nếu không có      
+        HttpSession session = request.getSession(); // false để không tạo mới nếu không có      
         CartDAO cDAO = (CartDAO) session.getAttribute("SHOP");
         if (view.equals("prod-details")) {
             int id = Integer.parseInt(request.getParameter("id"));
+            System.out.println("id:"+id);
             try {
                 if (cDAO != null) {
                     int num = oDAO.saveCartToDatabase(userId, cDAO);
@@ -57,6 +57,7 @@ public class ProductServlet extends HttpServlet {
                 Logger.getLogger(CheckoutServlet.class.getName()).log(Level.SEVERE, "Error while logging out: ", ex);
             }
             Products prod = pDAO.getProductById(id);
+            System.out.println("prod:"+ pDAO.getProductTypeSame(id));
             request.setAttribute("prodDetails", prod);
             request.setAttribute("prodType", pDAO.getProductTypeSame(id));
             String[] image = prod.getImage().split(",");

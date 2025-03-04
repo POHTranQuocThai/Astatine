@@ -70,7 +70,7 @@ public class ProfileServlet extends HttpServlet {
                 // Optionally, handle the case where the user is not found
             }
         } else {
-            response.sendRedirect("login.jsp"); // Redirect to login if email is not present
+            response.sendRedirect("WEB-INF/login.jsp"); // Redirect to login if email is not present
         }
     }
 
@@ -95,7 +95,7 @@ public class ProfileServlet extends HttpServlet {
             String password = request.getParameter("password");
         }
 
-        String fullname = request.getParameter("fullname");
+        String fullname = request.getParameter("fullname"); 
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String street = request.getParameter("street");
@@ -140,7 +140,6 @@ public class ProfileServlet extends HttpServlet {
                     user.setCity(city);
                     user.setCountry(country);
                     user.setPhone(phone);
-                    user.setAvatar(imagePaths.toString());
 
                     int result = uDao.updateUser(user);
                     if (result > 0) {
@@ -158,7 +157,7 @@ public class ProfileServlet extends HttpServlet {
                 response.sendRedirect("error.jsp");
             }
         } else {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("Login");
         }
     }
 
