@@ -34,7 +34,7 @@ public class Products {
         this.description = description;
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand, int quanOrder ) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;

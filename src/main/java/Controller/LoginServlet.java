@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import DAO.CartDAO;
 import model.GoogleAccount;
 import DAO.UserDAO;
 import java.io.IOException;
@@ -20,7 +21,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
 import DAO.GoogleLogin;
+import DAO.OrderDAO;
 import jakarta.servlet.annotation.WebServlet;
+import model.Cart;
+import model.Products;
 
 /**
  *

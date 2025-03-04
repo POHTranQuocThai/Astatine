@@ -301,7 +301,7 @@
                     <!-- product tab nav -->
                     <ul class="tab-nav">
                         <li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
-                        <li><a data-toggle="tab" href="#tab2">Comments</a></li>
+                        <li><a onclick="loadComments('${User.fullname}', '${prodDetails.productId}')" data-toggle="tab" href="#tab2">Comments</a></li>
                     </ul>
                     <!-- /product tab nav -->
 
@@ -330,7 +330,7 @@
                                 gap: 10px;
                                 margin-bottom: 10px;
                             }
-                          
+
                             .comment-header input,
                             .comment-header textarea {
                                 width: 100%;
@@ -453,7 +453,7 @@
                         </style>
 
                         <!-- tab2 -->
-                        <div id="tab2" class="tab-pane fade">
+                        <div  id="tab2" class="tab-pane fade">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="comment-box">                      
@@ -473,63 +473,35 @@
                         <script>
 
                             // Lưu trạng thái like của từng người dùng (giả lập backend)
-                            var likedComments = {}; // Định dạng: { commentId: [userId1, userId2] }
                             var userId = '${User.userId}'; // ✅ Gán giá trị từ backend vào biến
-
+                            let productId = '${prodDetails.productId}';
                             function addComment() {
                                 if (!userId || userId === 'null' || userId === 'undefined') {
                                     showToast('Please login to use comments!', '');
                                     return;
                                 }
-                                var commentText = document.getElementById("commentInput").value.trim();
+                                let commentText = document.getElementById("commentInput").value.trim();
+                                console.log(commentText.value);
                                 if (commentText === "") {
                                     showToast('Please enter the content!', '');
                                     return;
                                 }
-
-                                // Tạo commentId duy nhất (có thể dùng ID từ backend nếu có)
-//                                var commentId = "cmt_" + new Date().getTime();
-
-                                var commentDiv = createCommentElement('${User.fullname}', commentText, userId);
-                                document.getElementById("commentsList").appendChild(commentDiv);
-                                document.getElementById("commentInput").value = "";
-                            }
-                            function timeAgo(timestamp) {
-                                const now = Date.now(); // Lấy timestamp hiện tại (milliseconds)
-                                const past = new Date(timestamp).getTime(); // Chuyển timestamp đầu vào về milliseconds
-
-                                if (isNaN(past))
-                                    return "Không xác định"; // Kiểm tra nếu timestamp không hợp lệ
-
-                                const diff = Math.floor((now - past) / 1000); // Chênh lệch thời gian tính theo giây
-
-                                if (diff < 60) {
-                                    return `${diff} giây trước`;
-                                } else if (diff < 3600) {
-                                    return `${Math.floor(diff / 60)} phút trước`;
-                                } else if (diff < 86400) {
-                                    return `${Math.floor(diff / 3600)} giờ trước`;
-                                } else {
-                                    return `${Math.floor(diff / 86400)} ngày trước`;
-                                }
-                            }
-
-
-
-
-// Hàm tạo bình luận
-                            // Hàm tạo bình luận
-                            function createCommentElement(name, content, commentId) {
                                 const now = new Date();
                                 const dateString = now.toLocaleDateString("vi-VN");
                                 const timeString = now.toLocaleTimeString("vi-VN", {
                                     hour: "2-digit",
                                     minute: "2-digit",
                                 });
-
+                                const createAt = timeString + " " + dateString 
+                                addCommentServer(parseInt(userId), parseInt(productId), commentText)
+                            }
+                            // Hàm tạo bình luận
+                            function createCommentElement(name, content, createAt, commentId, productId) {
+     
                                 var commentDiv = document.createElement("div");
                                 commentDiv.classList.add("comment");
-                                commentDiv.dataset.commentId = commentId; // Gán ID cho comment
+                                commentDiv.dataset.commentId = commentId; // Gán ID bình luận
+                                commentDiv.dataset.userId = userId; // Gán ID người dùng
 
                                 var avatarDiv = document.createElement("div");
                                 avatarDiv.classList.add("avatar");
@@ -547,7 +519,7 @@
                                 var likeButton = document.createElement("span");
                                 likeButton.textContent = "Like (0)";
                                 likeButton.onclick = function () {
-                                    toggleLike(commentId, likeButton);
+                                    toggleLike(likeButton);
                                 };
                                 var replyButton = document.createElement("span");
                                 replyButton.textContent = "Reply";
@@ -561,42 +533,24 @@
                                 commentWrapper.appendChild(actionsBar);
                                 var repliesDiv = document.createElement("div");
                                 repliesDiv.classList.add("replies");
-
                                 var timeDiv = document.createElement("div");
+                                
                                 timeDiv.classList.add("comment-time");
-                                timeDiv.textContent = timeString + " " + dateString
-                                // Cập nhật thời gian hiển thị mỗi phút
-                                setInterval(() => {
-                                    timeDiv.textContent = timeAgo(timestamp);
-                                }, 60000);
+                                timeDiv.textContent = createAt;
+                                
                                 actionsBar.appendChild(timeDiv);
-
                                 commentDiv.appendChild(avatarDiv);
                                 commentDiv.appendChild(commentWrapper);
                                 commentDiv.appendChild(repliesDiv);
                                 return commentDiv;
                             }
-// Hàm xử lý like/unlike
-                            function toggleLike(commentId, likeButton) {
-                                if (!likedComments[commentId]) {
-                                    likedComments[commentId] = new Set();
+                            function toggleLike(likeButton) {
+                                if (!userId || userId === 'null' || userId === 'undefined') {
+                                    showToast('Please login to like comments!', '');
+                                    return;
                                 }
-                                var userLikes = likedComments[commentId];
-                                console.log(userLikes.size);
-                                if (userLikes.has(commentId)) {
-                                    // Nếu đã like => Unlike
-                                    userLikes.delete(commentId);
-                                } else {
-                                    // Nếu chưa like => Like
-                                    userLikes.add(commentId);
-                                }
-                                console.log(userLikes.size);
-                                let num = userLikes.size
-                                // Cập nhật số lượng like
-                                likeButton.textContent = `Like (` + num + `)`;
-                                likeButton.style.color = userLikes.has(commentId) ? '#007bff' : 'black';
+                                toggleLikeServer(likeButton);
                             }
-
 // Hiển thị khung trả lời
                             function showReplyBox(name, commentDiv) {
                                 var existingReplyBox = commentDiv.querySelector(".reply-box");
@@ -826,6 +780,7 @@
 <script src="assets/js/Coupon/coupon.js"></script>
 <script src="assets/js/utils/addtocart.js"></script>
 <script src="assets/js/utils/notification.js"></script>
+<script src="assets/js/utils/addComment.js"></script>
 <!-- ToastyFy -->
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
