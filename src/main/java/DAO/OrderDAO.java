@@ -33,11 +33,11 @@ public class OrderDAO extends DBContext {
                 nextId = rs.getInt("nextId");
             }
         }
-
         String updateOrder = "UPDATE Order_Details SET Quantity = ? WHERE Product_Id = ? AND Order_Id = ?";
 
-        String insertOrder = "INSERT INTO Orders (Order_ID, Customer_Id, Email, Phone, Street, Ward, District, City, Country, Order_Date,TotalPrice,Status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?, ?)";
+        String insertOrder = "INSERT INTO Orders (Customer_Id, Email, Phone, Street, Ward, District, City, Country, \n"
+                + "                    Voucher_Id, Transport_Id, Order_Date, Total_Price, Status) \n"
+                + "VALUES (?, ?, ?, ?, ?, ?,?, ?, null, null, ?, ?, ?);";
 
         String insertOrderDetail = "INSERT INTO Order_Details (Product_Id,Order_ID,Quantity,Price)"
                 + "VALUES (?, ?, ?, ?)";
@@ -50,26 +50,36 @@ public class OrderDAO extends DBContext {
             System.out.println("updatedRows " + updatedRows);
             if (updatedRows == 0) { // Nếu không có dòng nào được cập nhật, thêm mới sản phẩm
                 Object[] insertParams = {
-                    nextId, // Order_ID, tăng nextId cho mỗi sản phẩm mới
-                    customerId,
+                    customerId, // Customer_Id
                     "", // Email
                     "", // Phone
-                    "", // Strees
+                    "", // Street
                     "", // Ward
                     "", // District
                     "", // City
                     "", // Country
-                    order.getTotalPrice(), // TotalPrice
-                    "Pending", // Status
+                    null, // Voucher_Id (có thể NULL)
+                    null, // Transport_Id (có thể NULL)
+                    new java.sql.Timestamp(System.currentTimeMillis()), // Order_Date
+                    order.getTotalPrice(), // Total_Price (đã sửa tên)
+                    "Pending" // Status
                 };
+//                String sqlNextId = "SELECT SCOPE_IDENTITY() AS nextId";
+//                try ( ResultSet rs = execSelectQuery(sqlNextId)) {
+//                    if (rs.next()) {
+//                        nextId = rs.getInt("nextId");
+//                    }
+//                }
                 Object[] insertParamsDetail = {
                     nextId,
                     order.getProductId(),
                     order.getAmount(),
-                    order.getAmount()*prod.getPrice()
+                    order.getAmount() * prod.getPrice()
                 };
                 rowsAffected += execQuery(insertOrder, insertParams);
+                // Tính nextId một lần trước khi vào vòng lặp
                 rowsAffected += execQuery(insertOrderDetail, insertParamsDetail);
+                System.out.println("row" + rowsAffected);
             } else {
                 rowsAffected += updatedRows;
             }
@@ -144,7 +154,7 @@ public class OrderDAO extends DBContext {
                 + "FROM Products p\n"
                 + "JOIN Brands b ON p.Brand_Id = b.Brand_ID\n"
                 + "JOIN Order_Details o ON o.Product_ID = p.Product_ID\n"
-                + "JOIN Orders os ON os.Order_Id = o.Order_Id\n"
+                + "JOIN Orders os ON     os.Order_Id = o.Order_Id\n"
                 + "JOIN Customers c ON c.Customer_ID = os.Customer_Id\n"
                 + "JOIN Categories cat ON p.Category_Id = cat.Category_Id\n"
                 + "WHERE c.Customer_ID = '?'";
@@ -153,7 +163,7 @@ public class OrderDAO extends DBContext {
         try ( ResultSet rs = execSelectQuery(sql, params)) {
             while (rs.next()) {
                 // Tách chuỗi hình ảnh
-                String[] image = rs.getString(8).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
+                String[] image = rs.getString(9).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
 
                 // Tạo đối tượng Products và thêm vào danh sách
                 Products p = new Products(
@@ -163,14 +173,13 @@ public class OrderDAO extends DBContext {
                         rs.getInt(6), // Cột số lượng
                         rs.getDouble(7), // Cột giá
                         image[0], // Mảng hình ảnh từ cột hình ảnh
-                        rs.getString(9), // Cột tên thương hiệu
-                        rs.getString(10),
-                        rs.getInt(11),
-                        rs.getString(13)
+                        rs.getString(10), // Cột tên thương hiệu
+                        rs.getString(11),
+                        rs.getString(12),
+                        rs.getInt(13)
                 );
-
                 // Thiết lập trạng thái (nếu cần)
-                p.setStatus(rs.getString(12)); // Đảm bảo tên cột chính xác
+                p.setStatus(rs.getString(14)); // Đảm bảo tên cột chính xác
 
                 // Thêm sản phẩm vào danh sách
                 prod.add(p);
@@ -317,4 +326,3 @@ public class OrderDAO extends DBContext {
     }
 
 }
-
