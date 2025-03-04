@@ -104,16 +104,17 @@
                                     <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                        aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                        <div class="qty num-order">${counted != null ? counted: 0}</div>
+
+                                        <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
                             <!-- Account -->   
                             <%
-                               String email = (String) session.getAttribute("email");
+                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -126,7 +127,7 @@
                                 </div>
                             </div>                                                           
                             <div>           
-                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;" %>">
+                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;"%>">
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
@@ -299,28 +300,46 @@
                         <div class="store-filter clearfix">
                             <div class="store-sort">
                                 <%
-                                      // Lấy các giá trị từ request (nếu có)
-                                          String option = request.getParameter("option");
-                                          String show = request.getParameter("show");
+                                    // Lấy các giá trị từ request (nếu có)
+                                    String option = request.getParameter("option");
+                                    String show = request.getParameter("show");
+                                    String brand = request.getParameter("brand");
+                                    String minPriceParam = request.getParameter("price-min");
+                                    String maxPriceParam = request.getParameter("price-max");
+                                    String category = request.getParameter("category");
                                 %>
                                 <form action="<c:url value='Store' />" method="get">
+                                    <c:if test="${not empty param.search}">
+                                        <input type="hidden" name="search" value="${param.search}">
+                                    </c:if>
+                                    <% if (brand != null && !brand.isEmpty()) {%>
+                                    <input type="hidden" name="brand" value="<%= brand%>">
+                                    <% }%>  
+                                    <% if (minPriceParam != null && !minPriceParam.isEmpty()) {%>
+                                    <input type="hidden" name="price-min" value="<%= minPriceParam%>">
+                                    <% } %>
+                                    <% if (maxPriceParam != null && !maxPriceParam.isEmpty()) {%>
+                                    <input type="hidden" name="price-max" value="<%= maxPriceParam%>">
+                                    <% }%>
+                                    <% if (category != null && !category.isEmpty()) {%>
+                                    <input type="hidden" name="category" value="<%= category%>">
+                                    <% }%>
                                     <label>
                                         Sort by:
                                         <select class="input-select" name="option" onchange="this.form.submit()">
                                             <option value="" disabled selected>Select option</option>
-                                            <option value="sortName" <%= "sortName".equals(option) ? "selected" : "" %>>Name</option>
-                                            <option value="sortPrice" <%= "sortPrice".equals(option) ? "selected" : "" %>>Price</option>
+                                            <option value="sortName" <%= "sortName".equals(option) ? "selected" : ""%>>Name</option>
+                                            <option value="sortPrice" <%= "sortPrice".equals(option) ? "selected" : ""%>>Price</option>
                                         </select>
                                     </label>
-
                                     <label>
                                         Show:
                                         <select class="input-select" name="show" onchange="this.form.submit()">                    
-                                            <option value="up" <%= "up".equals(show) ? "selected" : "" %>>Up</option>
-                                            <option value="down" <%= "down".equals(show) ? "selected" : "" %>>Down</option>
+                                            <option value="up" <%= "up".equals(show) ? "selected" : ""%>>Up</option>
+                                            <option value="down" <%= "down".equals(show) ? "selected" : ""%>>Down</option>
                                         </select>
                                     </label>
-                                </form>                         
+                                </form>
                             </div>
                             <!-- /store top filter -->
 
@@ -334,14 +353,14 @@
                                     <c:when test="${not empty getByPrice}">
                                         <c:forEach items="${getByPrice}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
                                                     <div class="product-body">
                                                         <p class="product-category">Category</p>
                                                         <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
-                                                        <h4 class="product-price">$${prod.price}<del class="product-old-price">$990.00</del></h4>
+                                                        <h4 class="product-price">$${prod.price}</h4>
                                                         <div class="product-rating">
                                                             <i class="fa fa-star"></i>
                                                             <i class="fa fa-star"></i>
@@ -356,60 +375,72 @@
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                          
                                                     </div>
                                                 </div>
                                             </div>
                                         </c:forEach>
                                     </c:when>
-
 
                                     <c:when test="${not empty search}">
-                                        <c:forEach items="${search}" var="prod">
-                                            <div class="col-md-4 col-xs-6">
-                                                <div class="product">
-                                                    <div class="product-img">
-                                                        <img src="${prod.image}" alt="">
-                                                    </div>
-                                                    <div class="product-body">
-                                                        <p class="product-category">Category</p>
-                                                        <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
-                                                        <h4 class="product-price">$${prod.price}<del class="product-old-price">$990.00</del></h4>
-                                                        <div class="product-rating">
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
+                                        <div class="row">
+                                            <c:forEach items="${search}" var="prod">
+                                                <div class="col-md-4 col-xs-6">
+                                                    <div class="product" style="opacity: ${prod.countInStock > 0 ? '1' : '.5'}">
+                                                        <div class="product-img">
+                                                            <c:choose>
+                                                                <c:when test="${not empty prod.image and prod.image != ''}">
+                                                                    <img src="${prod.image}" alt="${prod.productName}" onerror="this.src='assets/img/default-image.jpg';">
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <img src="assets/img/default-image.jpg" alt="No image">
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </div>
-                                                        <div class="product-btns">
-                                                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
-                                                            <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
-                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                        <div class="product-body">
+                                                            <p class="product-category">Category</p>
+                                                            <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
+                                                            <h4 class="product-price">$${prod.price}</h4>
+                                                            <div class="product-rating">
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                            </div>
+                                                            <div class="product-btns">
+                                                                <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
+                                                                <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
+                                                                <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <div class="add-to-cart">
+                                                            <button class="add-to-cart-btn" style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${prod.productId}, '${email}')">
+                                                                <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card' : 'Sold Out'}
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </c:forEach>
+                                            </c:forEach>
+                                        </div>
                                     </c:when>
+
                                     <c:when test="${not empty brands}">
                                         <c:forEach items="${brands}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
                                                     <div class="product-body">
                                                         <p class="product-category">Category</p>
                                                         <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
-                                                        <h4 class="product-price">$${prod.price}<del class="product-old-price">$990.00</del></h4>
+                                                        <h4 class="product-price">$${prod.price}</h4>
                                                         <div class="product-rating">
                                                             <i class="fa fa-star"></i>
                                                             <i class="fa fa-star"></i>
@@ -420,13 +451,15 @@
                                                         <div class="product-btns">
                                                             <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
                                                             <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
-                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brandName}</span></button>
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                              
                                                     </div>
                                                 </div>
                                             </div>
@@ -435,14 +468,14 @@
                                     <c:when test="${not empty category}">
                                         <c:forEach items="${category}" var="prod">
                                             <div class="col-md-4 col-xs-6">
-                                                <div class="product">
+                                                <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                     <div class="product-img">
                                                         <img src="${prod.image}" alt="">
                                                     </div>
                                                     <div class="product-body">
                                                         <p class="product-category">Category</p>
                                                         <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
-                                                        <h4 class="product-price">$${prod.price}<del class="product-old-price">$990.00</del></h4>
+                                                        <h4 class="product-price">$${prod.price}</h4>
                                                         <div class="product-rating">
                                                             <i class="fa fa-star"></i>
                                                             <i class="fa fa-star"></i>
@@ -453,50 +486,56 @@
                                                         <div class="product-btns">
                                                             <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
                                                             <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
-                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brandName}</span></button>
                                                         </div>
                                                     </div>
                                                     <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <button class="add-to-cart-btn" 
+                                                                style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                            <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                        </button>                                 
                                                     </div>
                                                 </div>
                                             </div>
                                         </c:forEach>
                                     </c:when>
                                     <c:when test="${not empty products}">
-                                        <c:forEach items="${products}" var="prod">
-                                            <div class="col-md-4 col-xs-6">
-                                                <div class="product">
-                                                    <div class="product-img">
-                                                        <img src="${prod.image}" alt="">
-                                                    </div>
-                                                    <div class="product-body">
-                                                        <p class="product-category">Category</p>
-                                                        <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
-                                                        <h4 class="product-price">$${prod.price}<del class="product-old-price">$990.00</del></h4>
-                                                        <div class="product-rating">
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
+                                        <div class="row">
+                                            <c:forEach items="${products}" var="prod">
+                                                <div class="col-md-4 col-xs-6">
+                                                    <div class="product" style="opacity: ${prod.countInStock > 0 ? '1' : '.5'}">
+                                                        <div class="product-img">
+                                                            <img src="${prod.image}" alt="">
                                                         </div>
-                                                        <div class="product-btns">
-                                                            <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
-                                                            <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
-                                                            <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                        <div class="product-body">
+                                                            <p class="product-category">Category</p>
+                                                            <h3 class="product-name"><a href="Products?view=prod-details&id=${prod.productId}">${prod.productName}</a></h3>
+                                                            <h4 class="product-price">$${prod.price}</h4>
+                                                            <div class="product-rating">
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                                <i class="fa fa-star"></i>
+                                                            </div>
+                                                            <div class="product-btns">
+                                                                <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">${prod.type}</span></button>
+                                                                <button class="add-to-compare"><i class="bi bi-bag-heart"></i><span class="tooltipp">${prod.selled}</span></button>
+                                                                <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">${prod.brand}</span></button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="add-to-cart">
-                                                        <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                            <i class="fa fa-shopping-cart"></i> add to cart
-                                                        </button>                            
+                                                        <div class="add-to-cart">
+                                                            <button class="add-to-cart-btn" 
+                                                                    style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${prod.productId}, '${email}')">
+                                                                <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card' : 'Sold Out'}
+                                                            </button>                                
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </c:forEach>
+                                            </c:forEach>
+                                        </div>
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${not empty noProductsMessage}">
@@ -509,13 +548,27 @@
                                 <!-- /product -->
                             </div>
                             <!-- /store products -->
-
-                            
                             <nav aria-label="Page navigation">
-                                <ul class="pagination"> 
-                                    <c:forEach begin="1" end="${a.getNumberPage()}" var="i">
-                                        <li class="page-item ${indexPage == i?"active":""}">
-                                            <a href="Store?page=${i}">${i}</a>
+                                <ul class="pagination">
+                                    <c:forEach begin="1" end="${numberPage}" var="i">
+                                        <li class="page-item ${indexPage == i ? 'active' : ''}">
+                                            <c:choose>
+                                                <c:when test="${not empty selectedCategory}">
+                                                    <a class="page-link" href="Store?category=${selectedCategory}&page=${i}">${i}</a>
+                                                </c:when>
+                                                <c:when test="${not empty selectedBrand}">
+                                                    <a class="page-link" href="Store?brand=${selectedBrand}&page=${i}">${i}</a>
+                                                </c:when>
+                                                <c:when test="${not empty param.search}">
+                                                    <a class="page-link" href="Store?search=${param.search}&page=${i}">${i}</a>
+                                                </c:when>
+                                                <c:when test="${not empty param['price-min'] && not empty param['price-max']}">
+                                                    <a class="page-link" href="Store?price-min=${param['price-min']}&price-max=${param['price-max']}&page=${i}">${i}</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="page-link" href="Store?page=${i}">${i}</a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </li>
                                     </c:forEach>
                                 </ul>
@@ -528,9 +581,7 @@
                 <!-- /container -->
             </div>
             <!-- /SECTION -->
-
     </main>
-
     <!-- FOOTER -->
     <footer id="footer">
         <!-- top footer -->
@@ -555,11 +606,11 @@
                         <div class="footer">
                             <h3 class="footer-title">Categories</h3>
                             <ul class="footer-links">
-                                <li><a href="#">Hot deals</a></li>
-                                <li><a href="#">Racquet</a></li>
-                                <li><a href="#">Shoes</a></li>
-                                <li><a href="#">Apparel</a></li>
-                                <li><a href="#">Accessories</a></li>
+                                <!--<li><a href="#">Hot deals</a></li>-->
+                                <li><a href="http://localhost:8080/Store?category=Racket">Racquet</a></li>
+                                <li><a href="http://localhost:8080/Store?category=Shoes">Shoes</a></li>
+                                <!--<li><a href="#">Apparel</a></li>-->
+                                <li><a href="http://localhost:8080/Store?category=Accessories">Accessories</a></li>
                             </ul>
                         </div>
                     </div>
@@ -583,8 +634,8 @@
                         <div class="footer">
                             <h3 class="footer-title">Service</h3>
                             <ul class="footer-links">
-                                <li><a href="#">My Account</a></li>
-                                <li><a href="#">View Cart</a></li>
+                                <li><a href="http://localhost:8080/Profile?action=edit">My Account</a></li>
+                                <li><a href="http://localhost:8080/Checkout">View Cart</a></li>
                                 <li><a href="#">Wishlist</a></li>
                                 <li><a href="#">Track My Order</a></li>
                                 <li><a href="#">Help</a></li>
@@ -641,3 +692,4 @@
 </body>
 
 </html>
+
