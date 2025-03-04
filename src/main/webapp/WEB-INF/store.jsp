@@ -105,6 +105,7 @@
                                        aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
 
+
                                         <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
@@ -303,10 +304,12 @@
                                     // Lấy các giá trị từ request (nếu có)
                                     String option = request.getParameter("option");
                                     String show = request.getParameter("show");
+
                                     String brand = request.getParameter("brand");
                                     String minPriceParam = request.getParameter("price-min");
                                     String maxPriceParam = request.getParameter("price-max");
                                     String category = request.getParameter("category");
+
                                 %>
                                 <form action="<c:url value='Store' />" method="get">
                                     <c:if test="${not empty param.search}">
@@ -387,6 +390,7 @@
                                     </c:when>
 
                                     <c:when test="${not empty search}">
+
                                         <div class="row">
                                             <c:forEach items="${search}" var="prod">
                                                 <div class="col-md-4 col-xs-6">
@@ -400,6 +404,7 @@
                                                                     <img src="assets/img/default-image.jpg" alt="No image">
                                                                 </c:otherwise>
                                                             </c:choose>
+
                                                         </div>
                                                         <div class="product-body">
                                                             <p class="product-category">Category</p>
@@ -424,6 +429,7 @@
                                                                 <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card' : 'Sold Out'}
                                                             </button>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </c:forEach>
@@ -501,12 +507,14 @@
                                         </c:forEach>
                                     </c:when>
                                     <c:when test="${not empty products}">
+
                                         <div class="row">
                                             <c:forEach items="${products}" var="prod">
                                                 <div class="col-md-4 col-xs-6">
                                                     <div class="product" style="opacity: ${prod.countInStock > 0 ? '1' : '.5'}">
                                                         <div class="product-img">
                                                             <img src="${prod.image}" alt="">
+
                                                         </div>
                                                         <div class="product-body">
                                                             <p class="product-category">Category</p>
@@ -532,6 +540,8 @@
                                                                 <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card' : 'Sold Out'}
                                                             </button>                                
                                                         </div>
+
+
                                                     </div>
                                                 </div>
                                             </c:forEach>
@@ -573,6 +583,7 @@
                                     </c:forEach>
                                 </ul>
                             </nav>
+
                         </div>
                         <!-- /STORE -->
                     </div>
@@ -692,4 +703,5 @@
 </body>
 
 </html>
+
 

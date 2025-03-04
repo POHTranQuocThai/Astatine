@@ -1,3 +1,4 @@
+
 package model;
 import java.text.DecimalFormat;
 /**
@@ -17,12 +18,12 @@ public class Products {
     private String description;
     private int quanOrder;
     private String status = "Pending";
-    private String category;
+ 
 
     public Products() {
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String brand, String category, String description) {
+     public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type, String brand) {
         this.productId = productId;
         this.productName = productName;
         this.countInStock = countInStock;
@@ -30,11 +31,11 @@ public class Products {
         this.price = price;
         this.image = image;
         this.brand = brand;
-        this.category = category; // Gán category
+        this.type = type; // Gán category
         this.description = description;
     }
 
-    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description, String type,  String brand,  int quanOrder ) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -145,3 +146,4 @@ public class Products {
 //        // Format số và thêm đơn vị "đ"
 //        return formatter.format(number) + " đ";
 //}
+

@@ -39,6 +39,7 @@
 
         <!-- Custom stlylesheet -->
         <link type="text/css" rel="stylesheet" href="assets/css/style.css" />
+        <link type="text/css" rel="stylesheet" href="assets/css/chat.css" />
 
         <!-- Swiper -->
         <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
@@ -73,8 +74,8 @@
 
                 <!-- row -->
                 <div class="row" style="display: flex;
-                         justify-content: center;
-                         align-items: center;">
+                     justify-content: center;
+                     align-items: center;">
                     <!-- LOGO -->
                     <div class="col-md-3">
                         <div class="header-logo">
@@ -105,16 +106,16 @@
                                 <a class="dropdown-toggle" href="Checkout" id="navbarDropdownMenuLink" 
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-bag-heart-fill" style="font-size: 24px;"></i>
-                                    <div class="qty num-order">${counted != null ? counted: 0}</div>
+                                    <div class="qty num-order">${SHOP.size() > 0 ? SHOP.size(): 0}</div>
                                 </a>
                             </div>
                             <!-- /Cart -->
                             <!-- Account -->   
                             <%
-                               String email = (String) session.getAttribute("email");
+                                String email = (String) session.getAttribute("email");
                             %>
 
-                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;" %>">
+                            <div id="account-dropdown" style="<%= email != null && !email.isEmpty() ? "display: none;" : "display: inline-block;"%>">
                                 <a class="dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 20px;">
                                     <i class="bi bi-person-fill" style="font-size: 24px;"></i>
@@ -127,7 +128,7 @@
                                 </div>
                             </div>                                                           
                             <div>           
-                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;" %>">
+                                <div id="account-success" style="<%= email != null && !email.isEmpty() ? "display: block;" : "display: none;"%>">
                                     <div class="dropdown">
                                         <div style="display: flex; align-items: center; gap: 20px;">
                                             <div>
@@ -307,7 +308,7 @@
                                             <div class="products-slick" data-nav="#slick-nav-1">
                                                 <!-- product -->                      
                                                 <c:forEach items="${products}" var="prod">
-                                                    <div class="product">
+                                                    <div class="product" style="opacity: ${prod.countInStock > 0 ? '1': '.5'}">
                                                         <div class="product-img">
                                                             <img src="${prod.image}" alt="">
                                                             <div class="product-label">
@@ -337,10 +338,12 @@
                                                             </div>
                                                         </div>
                                                         <div class="add-to-cart">
-                                                            <button class="add-to-cart-btn" onclick="handleAddToCart(${prod.productId}, '${email}')">
-                                                                <i class="fa fa-shopping-cart"></i> add to cart
+                                                            <button class="add-to-cart-btn" 
+                                                                    style="pointer-events: ${prod.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${prod.productId}, '${email}')" >
+                                                                <i class="fa fa-shopping-cart"></i> ${prod.countInStock > 0 ? 'Add To Card':'Sold Out'}
                                                             </button>                            
-                                                        </div>
+                                                        </div>                      
                                                     </div>                                                      
                                                 </c:forEach>    
 
@@ -530,7 +533,7 @@
                                             <div class="products-slick" data-nav="#slick-nav-2">  
                                                 <!-- product -->                      
                                                 <c:forEach items="${topSelled}" var="top">
-                                                    <div class="product">
+                                                    <div class="product" style="opacity: ${top.countInStock > 0 ? '1': '.5'}">
                                                         <div class="product-img">
                                                             <img src="${top.image}" alt="">
                                                             <div class="product-label">
@@ -560,10 +563,12 @@
                                                             </div>
                                                         </div>
                                                         <div class="add-to-cart">
-                                                            <button onclick="handleAddToCart(${top.productId}, '${email}')" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add
-                                                                to
-                                                                cart</button>
-                                                        </div>
+                                                            <button class="add-to-cart-btn" 
+                                                                    style="pointer-events: ${top.countInStock > 0 ? 'auto' : 'none'};"
+                                                                    onclick="handleAddToCart(${top.productId}, '${email}')" >
+                                                                <i class="fa fa-shopping-cart"></i> ${top.countInStock > 0 ? 'Add To Card':'Sold Out'}
+                                                            </button>                            
+                                                        </div>   
                                                     </div>
                                                 </c:forEach>    
                                                 <!-- /product -->
@@ -575,9 +580,12 @@
                                 </div>
                             </div>
                             <!-- /Products tab & slick -->
+
                         </div>
                         <!-- /row -->
+
                     </div>
+
                     <!-- /container -->
                 </div>
                 <!-- /SECTION -->
@@ -645,6 +653,23 @@
                         </div>
                     </div>
                     <!-- /row -->
+
+                    <!--                    <div id='tawk_67b54113aa66771910dec480'></div>-->
+                    <!--Start of Tawk.to Script-->
+                    <!--Start of Tawk.to Script-->
+                    <!--                    <script type="text/javascript">
+                                            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+                                            (function () {
+                                                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+                                                s1.async = true;
+                                                s1.src = 'https://embed.tawk.to/67b54113aa66771910dec480/1ike4ofrf';
+                                                s1.charset = 'UTF-8';
+                                                s1.setAttribute('crossorigin', '*');
+                                                s0.parentNode.insertBefore(s1, s0);
+                                            })();
+                                        </script>-->
+
+
                 </div>
                 <!-- /container -->
             </div>
@@ -667,6 +692,49 @@
                         </div>
                     </div>
                     <!-- /row -->
+                    <!-- Icon Chat -->
+                    <div id="chatIcon">
+                        <svg viewBox="0 0 100 100">
+                        <defs>
+                        <!-- Định nghĩa đường tròn để chữ chạy quanh -->
+                        <path id="circlePath" d="M 10,50 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0"/>
+                        </defs>
+                        <g>
+                        <text>
+                        <textPath href="#circlePath">Chat • Support •</textPath>
+                        </text>
+                        </g>
+                        </svg>
+                        <img src="assets/img/logo.png" alt="alt"/>
+                    </div>
+                    <div id="chat-widget" style="display: block">
+                        <div id="chat-header">Astatine Admin</div>
+                        <div id="chat-box">
+                            <h6 class="chat-date"></h6>
+                            <div class="login-require" style="display: ${User != null ? 'none': 'block'}">
+                                <h3 class="label-info">Please login to use Chat!</h3>
+                                <div class="btn-chat-login">
+                                    <a class="login" href="Login">Log In</a>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chat-input">
+                            <input type="text" id="message" placeholder="Nhập tin nhắn..." />
+                            <button class="btn-chat" onclick="sendMessage(${User.userId}, ${User.isAdmin})">➤</button>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const input = document.getElementById("message");
+                            if (input) {
+                                input.addEventListener("keypress", function (event) {
+                                    if (event.key === "Enter")
+                                        sendMessage(${User.userId},${User.isAdmin});
+                                });
+                            }
+                        });
+                    </script>
                 </div>
                 <!-- /container -->
             </div>
@@ -677,11 +745,13 @@
 
     <script>
         window.onload = function () {
-        <% if (session.getAttribute("toastMessage") != null) { %>
-            showToast("<%= session.getAttribute("toastMessage") %>", "<%= session.getAttribute("toastType") %>");
-        <% session.removeAttribute("toastMessage"); session.removeAttribute("toastType"); %>
-        <% } %>
-        };
+        <% if (session.getAttribute("toastMessage") != null) {%>
+            showToast("<%= session.getAttribute("toastMessage")%>", "<%= session.getAttribute("toastType")%>");
+        <% session.removeAttribute("toastMessage");
+            session.removeAttribute("toastType"); %>
+        <% }%>
+        }
+        ;
     </script>
 
     <!-- jQuery Plugins -->
@@ -693,6 +763,7 @@
     <script src="assets/js/JSDefault/main.js"></script>
     <script src="assets/js/utils/addtocart.js"></script>
     <script src="assets/js/utils/notification.js"></script>
+    <script src="assets/js/utils/chatbox.js"></script>
     <!-- ToastyFy -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 

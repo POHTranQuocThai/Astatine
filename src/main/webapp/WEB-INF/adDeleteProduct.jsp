@@ -30,7 +30,7 @@
         <nav id="sidebar">
             <ul>
                 <li>
-                    <a href="HomeServlet" style="padding: 0;" class="logo">
+                    <a href="Home" style="padding: 0;" class="logo">
                         <img src="./assets/img/logoAdmin.ico" alt="logo"/>
                     </a>
                     <button onclick="toggleSidebar()" id="toggle-btn">

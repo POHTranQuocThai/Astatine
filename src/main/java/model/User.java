@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -19,7 +20,6 @@ public class User {
     private String country;
     private String password;
     private String email;
-    private String avatar;
     private String phone;
     private boolean isAdmin;
 
@@ -32,7 +32,7 @@ public class User {
         this.email = email;
     }
 
-    public User(int userId, String fullname, String street, String ward, String district, String city, String country, String password, String email, String avatar, String phone, boolean isAdmin) {
+    public User(int userId, String fullname,String email, String password,String phone,String street, String ward, String district, String city, String country, boolean isAdmin) {
         this.userId = userId;
         this.fullname = fullname != null ? fullname : "";  // Nếu fullname là null thì gán giá trị mặc định là chuỗi rỗng
         this.street = street != null ? street : "";          // Tương tự cho street
@@ -42,7 +42,6 @@ public class User {
         this.country = country != null ? country : "";
         this.password = password != null ? password : "";
         this.email = email != null ? email : "";
-        this.avatar = avatar != null ? avatar : "";
         this.phone = phone != null ? phone : "";
         this.isAdmin = isAdmin;  // Không cần kiểm tra vì boolean có giá trị mặc định là false
     }
@@ -119,13 +118,7 @@ public class User {
         this.email = email;
     }
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
+  
 
     public String getPhone() {
         return phone;
@@ -145,7 +138,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", fullname=" + fullname + ", street=" + street + ", ward=" + ward + ", district=" + district + ", city=" + city + ", country=" + country + ", password=" + password + ", email=" + email + ", avatar=" + avatar + ", phone=" + phone + ", isAdmin=" + isAdmin + '}';
+        return "User{" + "userId=" + userId + ", fullname=" + fullname + ", street=" + street + ", ward=" + ward + ", district=" + district + ", city=" + city + ", country=" + country + ", password=" + password + ", email=" + email + ",  phone=" + phone + ", isAdmin=" + isAdmin + '}';
     }
 
 }
+

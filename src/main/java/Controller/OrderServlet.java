@@ -91,9 +91,12 @@ public class OrderServlet extends HttpServlet {
                 // Lưu giỏ hàng vào cơ sở dữ liệu và cập nhật thông tin đơn hàng
                 oDAO.saveCartToDatabase(userId, cDAO);
                 num1 = oDAO.orderedSuccess(userId, order, cDAO);
-                System.out.println("num1"+num1);
+                System.out.println("num1" + num1);
                 request.setAttribute("messOrderSuccess", "Order success");
-                session.removeAttribute("SHOP"); // Xóa giỏ hàng sau khi lưu
+                // Xóa giỏ hàng hoàn toàn
+                cDAO.clear(); // Xóa toàn bộ sản phẩm
+                session.removeAttribute("SHOP");  // Xóa session cũ
+
             } else {
                 // Nếu tồn kho không đủ, chuyển hướng về trang checkout
                 request.getRequestDispatcher("Checkout").forward(request, response);

@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -32,36 +33,53 @@ public class OrderDAO extends DBContext {
                 nextId = rs.getInt("nextId");
             }
         }
+        String updateOrder = "UPDATE Order_Details SET Quantity = ? WHERE Product_Id = ? AND Order_Id = ?";
 
-        String updateOrder = "UPDATE Orders SET Amount = ? WHERE Product_ID = ? AND Customer_ID = ? AND status != 'Processing'";
+        String insertOrder = "INSERT INTO Orders (Customer_Id, Email, Phone, Street, Ward, District, City, Country, \n"
+                + "                    Voucher_Id, Transport_Id, Order_Date, Total_Price, Status) \n"
+                + "VALUES (?, ?, ?, ?, ?, ?,?, ?, null, null, ?, ?, ?);";
 
-        String insertOrder = "INSERT INTO Orders (Order_ID, Street, Ward, District, City, Country, Email, Phone, Amount, Order_Date, Status, Customer_ID, Product_ID, TotalPrice) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?, ?, ?, ?)";
-
+        String insertOrderDetail = "INSERT INTO Order_Details (Product_Id,Order_ID,Quantity,Price)"
+                + "VALUES (?, ?, ?, ?)";
         for (Order order : cDAO.getProductsInCart(customerId)) {
             // Cập nhật nếu sản phẩm đã tồn tại
             Products prod = pDAO.getProductById(order.getProductId());
 
-            Object[] updateParams = {order.getAmount(), order.getProductId(), customerId};
+            Object[] updateParams = {order.getAmount(), order.getProductId(), nextId};
             int updatedRows = execQuery(updateOrder, updateParams);
-
+            System.out.println("updatedRows " + updatedRows);
             if (updatedRows == 0) { // Nếu không có dòng nào được cập nhật, thêm mới sản phẩm
                 Object[] insertParams = {
-                    nextId++, // Order_ID, tăng nextId cho mỗi sản phẩm mới
+                    customerId, // Customer_Id
+                    "", // Email
+                    "", // Phone
                     "", // Street
                     "", // Ward
                     "", // District
                     "", // City
                     "", // Country
-                    "", // Email
-                    "", // Phone
-                    order.getAmount(), // Amount
-                    "Pending", // Status
-                    customerId, // Customer_ID
-                    order.getProductId(), // Product_ID
-                    order.getTotalPrice() // TotalPrice
+                    null, // Voucher_Id (có thể NULL)
+                    null, // Transport_Id (có thể NULL)
+                    new java.sql.Timestamp(System.currentTimeMillis()), // Order_Date
+                    order.getTotalPrice(), // Total_Price (đã sửa tên)
+                    "Pending" // Status
+                };
+//                String sqlNextId = "SELECT SCOPE_IDENTITY() AS nextId";
+//                try ( ResultSet rs = execSelectQuery(sqlNextId)) {
+//                    if (rs.next()) {
+//                        nextId = rs.getInt("nextId");
+//                    }
+//                }
+                Object[] insertParamsDetail = {
+                    nextId,
+                    order.getProductId(),
+                    order.getAmount(),
+                    order.getAmount() * prod.getPrice()
                 };
                 rowsAffected += execQuery(insertOrder, insertParams);
+                // Tính nextId một lần trước khi vào vòng lặp
+                rowsAffected += execQuery(insertOrderDetail, insertParamsDetail);
+                System.out.println("row" + rowsAffected);
             } else {
                 rowsAffected += updatedRows;
             }
@@ -75,31 +93,33 @@ public class OrderDAO extends DBContext {
         int rowsAffected = 0;
 
         // Lấy Order_ID lớn nhất hiện có (giả sử mỗi đơn hàng chỉ có một mã duy nhất)
-        String sqlOrderId = "SELECT ISNULL(MAX(order_Id), 0) as nextId FROM Orders";
-        int orderId = 0;
-        try ( ResultSet rs = execSelectQuery(sqlOrderId)) {
-            if (rs.next()) {
-                orderId = rs.getInt("nextId");
+        String sqlOrderId = "SELECT Order_Id FROM Orders WHERE Customer_ID = ? AND status = 'Pending'";
+        List<Integer> pendingOrderIds = new ArrayList<>();
+        try ( ResultSet rs = execSelectQuery(sqlOrderId, new Object[]{userId})) {
+            while (rs.next()) { // 🛠 SỬA LỖI: Lấy tất cả Order_ID, không chỉ lấy 1 cái
+                pendingOrderIds.add(rs.getInt(1));
             }
         }
 
         String sql = "UPDATE Orders SET street = ?, ward = ?, district = ?, city = ?, country = ?, phone = ?, order_date = GETDATE(), status = ?, totalPrice = ?, email = ? WHERE Order_ID = ?";
         String updateStock = "UPDATE products SET countinstock = ?, selled = ? WHERE Product_ID = ?";
 
-        // Tham số cho câu lệnh cập nhật Orders
-        Object[] params = {
-            order.getStreet(),
-            order.getWard(),
-            order.getDistrict(),
-            order.getCity(),
-            order.getCountry(),
-            order.getPhone(),
-            order.getStatus(),
-            order.getTotalPrice(),
-            order.getEmail(),
-            orderId // Sử dụng orderId lấy từ câu lệnh SELECT
-        };
-
+        for (int orderId : pendingOrderIds) {
+            Object[] orderParams = {
+                order.getStreet(),
+                order.getWard(),
+                order.getDistrict(),
+                order.getCity(),
+                order.getCountry(),
+                order.getPhone(),
+                order.getStatus(),
+                order.getTotalPrice(),
+                order.getEmail(),
+                orderId
+            };
+            rowsAffected += execQuery(sql, orderParams);
+            System.out.println("row" + rowsAffected);
+        }
         try {
             for (Order cartOrder : cDAO.getProductsInCart(userId)) {
                 Products prod = pDAO.getProductById(cartOrder.getProductId());
@@ -121,7 +141,6 @@ public class OrderDAO extends DBContext {
             }
 
             // Thực thi câu lệnh UPDATE cho Orders
-            rowsAffected += execQuery(sql, params);
         } catch (SQLException e) {
             e.printStackTrace(); // In ra lỗi nếu có
         }
@@ -131,35 +150,36 @@ public class OrderDAO extends DBContext {
 
     public ArrayList<Products> getProductByUserId(int userId) {
         ArrayList<Products> prod = new ArrayList<>();
-        String sql = "SELECT p.*, b.Brand_Name, o.Amount, o.status "
-                + "FROM Products p "
-                + "JOIN Brands b ON p.Brand_ID = b.Brand_ID "
-                + "JOIN Orders o ON o.Product_ID = p.Product_ID "
-                + "JOIN Customers c ON c.Customer_ID = o.Customer_ID "
-                + "WHERE c.Customer_ID = ?";
+        String sql = "SELECT p.*, b.Brand_Name, o.Quantity, os.status, cat.Category_Name\n"
+                + "FROM Products p\n"
+                + "JOIN Brands b ON p.Brand_Id = b.Brand_ID\n"
+                + "JOIN Order_Details o ON o.Product_ID = p.Product_ID\n"
+                + "JOIN Orders os ON     os.Order_Id = o.Order_Id\n"
+                + "JOIN Customers c ON c.Customer_ID = os.Customer_Id\n"
+                + "JOIN Categories cat ON p.Category_Id = cat.Category_Id\n"
+                + "WHERE c.Customer_ID = '?'";
         Object[] params = {userId};
 
         try ( ResultSet rs = execSelectQuery(sql, params)) {
             while (rs.next()) {
                 // Tách chuỗi hình ảnh
-                String[] image = rs.getString(5).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
+                String[] image = rs.getString(9).split(","); // Đặt tên cột thực tế chứa hình ảnh thay vì "ImageColumnName"
 
                 // Tạo đối tượng Products và thêm vào danh sách
                 Products p = new Products(
                         rs.getInt(1), // Cột ID
                         rs.getString(2), // Cột tên sản phẩm
-                        rs.getString(3), // Cột mô tả
-                        rs.getInt(4), // Cột số lượng
+                        rs.getInt(5), // Cột mô tả
+                        rs.getInt(6), // Cột số lượng
+                        rs.getDouble(7), // Cột giá
                         image[0], // Mảng hình ảnh từ cột hình ảnh
-                        rs.getDouble(6), // Cột giá
-                        rs.getInt(8), // Cột đã bán
-                        rs.getString(9), // Cột tên thương hiệu
-                        rs.getString(10),
-                        rs.getInt(11)
+                        rs.getString(10), // Cột tên thương hiệu
+                        rs.getString(11),
+                        rs.getString(12),
+                        rs.getInt(13)
                 );
-
                 // Thiết lập trạng thái (nếu cần)
-                p.setStatus(rs.getString(12)); // Đảm bảo tên cột chính xác
+                p.setStatus(rs.getString(14)); // Đảm bảo tên cột chính xác
 
                 // Thêm sản phẩm vào danh sách
                 prod.add(p);
@@ -172,7 +192,10 @@ public class OrderDAO extends DBContext {
     }
 
     public int removeOrder(int userId, int prodId) {
-        String sql = "delete from orders WHERE Customer_ID = ? and Product_ID = ?";
+        String sql = "DELETE o\n"
+                + "FROM Order_Details o\n"
+                + "JOIN Orders os ON os.Order_Id = o.Order_Id\n"
+                + "WHERE os.Customer_ID = ? AND o.Product_ID = ?";
         Object[] params = {userId, prodId};
         try {
             return execQuery(sql, params);
