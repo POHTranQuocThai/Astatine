@@ -46,6 +46,7 @@ Table OF Contents
 11 > SLICK STYLE
 12 > RESPONSIVE
 13 > PROFILE
+14 > PAID ONLINE
 ------------------------------------*/
 
 /*=========================================================
@@ -1085,7 +1086,13 @@ textarea.input {
     -webkit-box-shadow: 0px 0px 6px 0px #E4E7ED, 0px 0px 0px 2px #21A691;
     box-shadow: 0px 0px 6px 0px #E4E7ED, 0px 0px 0px 2px #21A691;
 }
-
+/*.sold-out {
+    background-color: pink;
+    position: absolute;
+    width: 300px;
+    height: 1000px;
+    z-index: 99;
+}*/
 .product .product-img {
     position: relative;
 }
@@ -2521,4 +2528,11 @@ textarea.input {
 .edit-form button:hover {
     background-color: #009e8e;
 }
+ 
+/*=========================================================
+        14 -> PAID ONLINE
+===========================================================*/
 
+img.qr-code {
+    width: 100%;
+}

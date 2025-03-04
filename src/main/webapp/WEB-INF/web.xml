@@ -80,6 +80,27 @@
         <servlet-name>adCouponServlet</servlet-name>
         <servlet-class>Controller.adCouponServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Chat</servlet-name>
+        <servlet-class>Controller.ChatServlet</servlet-class>
+    </servlet>
+    <servlet>
+
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>Controller.CommentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LikeCommentServlet</servlet-name>
+        <servlet-class>Controller.LikeCommentServlet</servlet-class>
+
+        <servlet-name>requestPasswordServlet</servlet-name>
+        <servlet-class>Controller.requestPasswordServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>resetPasswordServlet</servlet-name>
+        <servlet-class>Controller.resetPasswordServlet</servlet-class>
+
+    </servlet>
     <servlet-mapping>
         <servlet-name>adListServlet</servlet-name>
         <url-pattern>/List</url-pattern>
@@ -157,11 +178,32 @@
         <url-pattern>/Orders</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>HomeServlet</welcome-file>
+        <welcome-file>Home</welcome-file>
     </welcome-file-list>
     <servlet-mapping>
         <servlet-name>adCouponServlet</servlet-name>
         <url-pattern>/Coupon</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Chat</servlet-name>
+        <url-pattern>/Chat</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/Comment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LikeCommentServlet</servlet-name>
+        <url-pattern>/LikeComment</url-pattern>
+
+        <servlet-name>requestPasswordServlet</servlet-name>
+        <url-pattern>/requestPassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>resetPasswordServlet</servlet-name>
+        <url-pattern>/resetPassword</url-pattern>
+
     </servlet-mapping>
     <session-config>
         <session-timeout>

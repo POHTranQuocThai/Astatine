@@ -1,9 +1,10 @@
-package Controller;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+package Controller;
+
 import DAO.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,7 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/signup.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
     }
 
     /**
@@ -52,40 +53,30 @@ public class SignupServlet extends HttpServlet {
             String email = request.getParameter("email");
             String pass = request.getParameter("password");
             UserDAO uDAO = new UserDAO();
+            System.out.println("f"+fullname);
+            System.out.println("f"+email);
+            System.out.println("f"+pass);
 
-            // Kiểm tra xem fullname hoặc email đã tồn tại
-            boolean existsFullname = uDAO.checkFullname(fullname);
             boolean existsEmail = uDAO.checkEmail(email);
 
-            // Nếu fullname hoặc email đã tồn tại, hiển thị thông báo lỗi và dừng lại
-            if (existsFullname || existsEmail) {
-                if (existsFullname) {
-                    request.setAttribute("existsFullname", "The name already exists!");
-                    request.setAttribute("fullname", fullname);
-                }
-                if (existsEmail) {
-                    request.setAttribute("existsEmail", "The email already exists!!");
-                    request.setAttribute("email", email);
-                }
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;  // Dừng quá trình đăng ký nếu có lỗi
+            if (existsEmail) {
+                request.setAttribute("existsEmail", "The email already exists!!");
+                request.setAttribute("fullname", fullname);
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
+                return;
             }
 
-            // Nếu không có lỗi, tiến hành mã hóa mật khẩu và đăng ký
             String hashedPass = uDAO.getHashPass(pass);
+
             if (uDAO.signup(fullname, email, hashedPass) != null) {
                 request.setAttribute("successMes", "You have successfully registered!");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-                return;
+                request.getRequestDispatcher("WEB-INF/login.jsp").forward(request, response);
             } else {
-                // Nếu đăng ký thất bại do lý do khác
                 request.setAttribute("errorMes", "Sign Up failed!");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;
+                request.getRequestDispatcher("WEB-INF/signup.jsp").forward(request, response);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(SignupServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (SQLException | NoSuchAlgorithmException ex) {
             Logger.getLogger(SignupServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -1,5 +1,8 @@
 let isOpen = false;
-
+//function formatVietnameseCurrency(number) {
+//    // Chuyển số thành chuỗi, thêm dấu chấm phân cách hàng nghìn, và thêm đơn vị VNĐ
+//    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VNĐ";
+//}
 const handleCoupon = () => {
     const couponContainer = document.querySelector('.coupon');
     if (couponContainer) {
