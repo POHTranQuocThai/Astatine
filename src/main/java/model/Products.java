@@ -1,5 +1,5 @@
 package model;
-
+import java.text.DecimalFormat;
 /**
  *
  * @author Tran Quoc Thai - CE181618
@@ -17,11 +17,24 @@ public class Products {
     private String description;
     private int quanOrder;
     private String status = "Pending";
+    private String category;
+
     public Products() {
     }
 
-    
-    public Products(int productId, String productName, String type, int countInStock, String image, double price, int selled, String description,String brand) {
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String brand, String category, String description) {
+        this.productId = productId;
+        this.productName = productName;
+        this.countInStock = countInStock;
+        this.selled = selled;
+        this.price = price;
+        this.image = image;
+        this.brand = brand;
+        this.category = category; // Gán category
+        this.description = description;
+    }
+
+    public Products(int productId, String productName, int countInStock, int selled, double price, String image, String description,  String brand, int quanOrder, String type) {
         this.productId = productId;
         this.productName = productName;
         this.type = type;
@@ -30,17 +43,6 @@ public class Products {
         this.price = price;
         this.brand = brand != null ? brand : "";
         this.selled = selled;
-        this.description = description;
-    }
-    public Products(int productId, String productName, String type, int countInStock, String image, double price, int selled, String description,String brand,int quanOrder) {
-        this.productId = productId;
-        this.productName = productName;
-        this.type = type;
-        this.countInStock = countInStock;
-        this.image = image;
-        this.price = price;
-        this.brand = brand != null ? brand : "";
-        this.selled = selled;   
         this.description = description;
         this.quanOrder = quanOrder != 0 ? quanOrder : 1;
     }
@@ -133,5 +135,13 @@ public class Products {
         this.status = status;
     }
     
-    
+    public String getCategory() {
+        return category;
+    }
 }
+//    public String formatVietnameseCurrency(double number) {
+//    // Chuyển số thành chuỗi, thêm dấu chấm phân cách hàng nghìn, và thêm đơn vị VNĐ
+//    DecimalFormat formatter = new DecimalFormat("#,###");
+//        // Format số và thêm đơn vị "đ"
+//        return formatter.format(number) + " đ";
+//}
